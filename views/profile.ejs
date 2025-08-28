@@ -1,0 +1,102 @@
+<div class="profile-container">
+  <h2 class="profile-header-title">Your Profile</h2>
+
+  <div class="profile-header">
+    <% if (user.profilePhotoUrl) { %>
+      <img src="<%= user.profilePhotoUrl %>" alt="Profile" class="profile-photo">
+    <% } else { %>
+      <div class="profile-photo-placeholder">
+        <%= (user.email || '?').charAt(0).toUpperCase() %>
+      </div>
+    <% } %>
+    <h3><%= user.name || user.email %></h3>
+    <p>ID: <%= user._id %></p>
+  </div>
+
+  <!-- Update Basic Information -->
+  <div class="section">
+    <h4>Update Basic Information</h4>
+    <form action="/profile/update" method="POST" class="profile-form">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" value="<%= user.name || '' %>" placeholder="Your Name">
+
+      <label for="profilePhotoUrl">Profile Photo URL</label>
+      <input type="url" id="profilePhotoUrl" name="profilePhotoUrl" value="<%= user.profilePhotoUrl || '' %>" placeholder="https://example.com/photo.jpg">
+      <small>Paste a direct image URL here.</small>
+
+      <button type="submit">Update Profile</button>
+    </form>
+  </div>
+
+  <!-- Change Password -->
+  <div class="section">
+    <h4>Change Password</h4>
+    <form action="/profile/password" method="POST" class="profile-form">
+      <label for="currentPassword">Current Password</label>
+      <input type="password" id="currentPassword" name="currentPassword" required placeholder="••••••••">
+
+      <label for="newPassword">New Password</label>
+      <input type="password" id="newPassword" name="newPassword" required placeholder="••••••••">
+
+      <label for="confirmNewPassword">Confirm New Password</label>
+      <input type="password" id="confirmNewPassword" name="confirmNewPassword" required placeholder="••••••••">
+
+      <button type="submit">Change Password</button>
+    </form>
+  </div>
+
+  <!-- Connected Social Accounts -->
+  <div class="section">
+    <h4>Connected Social Accounts</h4>
+    <ul class="social-account-list">
+      <li>
+        <span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google" class="social-icon"> Google:
+        </span>
+        <% if (user.googleId) { %>
+          <span class="connected">Connected</span>
+          <form action="/profile/disconnect-social/google" method="POST">
+            <button type="submit" class="disconnect">Disconnect</button>
+          </form>
+        <% } else { %>
+          <a href="/auth/google" class="connect">Connect</a>
+        <% } %>
+      </li>
+      <li>
+        <span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/1024px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon"> Facebook:
+        </span>
+        <% if (user.facebookId) { %>
+          <span class="connected">Connected</span>
+          <form action="/profile/disconnect-social/facebook" method="POST">
+            <button type="submit" class="disconnect">Disconnect</button>
+          </form>
+        <% } else { %>
+          <a href="/auth/facebook" class="connect">Connect</a>
+        <% } %>
+      </li>
+      <li>
+        <span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png" alt="Twitter" class="social-icon"> Twitter:
+        </span>
+        <% if (user.twitterId) { %>
+          <span class="connected">Connected</span>
+          <form action="/profile/disconnect-social/twitter" method="POST">
+            <button type="submit" class="disconnect">Disconnect</button>
+          </form>
+        <% } else { %>
+          <a href="/auth/twitter" class="connect">Connect</a>
+        <% } %>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Danger Zone -->
+  <div class="section danger-zone">
+    <h4>Danger Zone: Delete Account</h4>
+    <p>Permanently delete your account. This action cannot be undone.</p>
+    <form action="/profile/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+      <button type="submit" class="delete-btn">Delete My Account</button>
+    </form>
+  </div>
+</div>

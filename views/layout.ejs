@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> | My Auth App</title>
+  
+  <!-- Main Layout CSS -->
+  <link rel="stylesheet" href="/css/layout.css" />
+
+  <!-- Page-specific CSS -->
+  <% if (title === 'Login' || title === 'Register') { %>
+    <link rel="stylesheet" href="/css/auth.css" />
+  <% } %>
+  <% if (title === 'Your Profile') { %>
+    <link rel="stylesheet" href="/css/profile.css" />
+  <% } %>
+  
+   <% if (title === 'Home') { %>
+    <link rel="stylesheet" href="/css/home.css" />
+  <% } %>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <nav>
+        <div>
+          <a href="/">Home</a>
+        </div>
+        <div>
+
+          <% if (user) { %>
+            <a href="/profile">Profile</a>
+            <a href="/auth/logout">Logout</a>
+          <% } else { %>
+            <a href="/auth/login">Login</a>
+            <a href="/auth/register">Register</a>
+          <% } %>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Flash Messages -->
+  <div class="container">
+    <% if (messages.error && messages.error.length > 0) { %>
+      <% messages.error.forEach(function(msg) { %>
+        <div class="alert-error"><%= msg %></div>
+      <% }) %>
+    <% } %>
+    <% if (messages.success && messages.success.length > 0) { %>
+      <% messages.success.forEach(function(msg) { %>
+        <div class="alert-success"><%= msg %></div>
+      <% }) %>
+    <% } %>
+  </div>
+
+  <!-- Page Content -->
+  <main class="container">
+    <%- body %>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      &copy; <%= new Date().getFullYear() %> My Auth App. All rights reserved.
+    </div>
+  </footer>
+
+</body>
+</html>

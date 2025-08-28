@@ -1,0 +1,21 @@
+<h1>Doctor Dashboard</h1>
+
+<h3>Patients with Granted Access</h3>
+
+<ul>
+  <% if (accessList && accessList.length > 0) { %>
+    <% accessList.forEach(access => { %>
+  <tr>
+    <td><%= access.patientId.name || access.patientId.email %></td>
+    <td><%= access.grantedAt.toDateString() %></td>
+    <td>
+      <a href="/records/patient/<%= access.patientId._id %>" class="btn btn-primary">
+        View Records
+      </a>
+    </td>
+  </tr>
+<% }); %>
+  <% } else { %>
+    <li>No patients have granted you access yet.</li>
+  <% } %>
+</ul>
