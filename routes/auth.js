@@ -6,7 +6,9 @@ const passport = require('passport');
 const User = require('../models/User');
 const router = express.Router();
 
+// -------------------------------------------------------------------
 // Register routes
+// -------------------------------------------------------------------
 router.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
@@ -49,7 +51,10 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
+// -------------------------------------------------------------------
 // Login routes
+// -------------------------------------------------------------------
+
 router.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
@@ -65,6 +70,7 @@ router.post('/login', (req, res, next) => {
       if (err) return next(err);
 
       // Redirect based on role
+
       if (user.role === 'doctor') {
         return res.redirect('/doctor/dashboard');
       } else if (user.role === 'patient') {
@@ -76,7 +82,11 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
+// -------------------------------------------------------------------
 // Logout
+// -------------------------------------------------------------------
+
+
 router.get('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
@@ -85,16 +95,61 @@ router.get('/logout', (req, res, next) => {
   });
 });
 
+// -------------------------------------------------------------------
+// Role selection routes (used for first-time Google login)
+// -------------------------------------------------------------------
+router.get('/select-role', (req, res) => {
+  if (!req.user) {
+    return res.redirect('/auth/login');
+  }
+ res.render('select-role', { title: 'Select Role' });
+});
+
+router.post('/select-role', async (req, res) => {
+  const { role } = req.body; // "doctor" or "patient"
+  if (!['doctor', 'patient'].includes(role)) {
+    return res.status(400).send('Invalid role');
+  }
+
+  req.user.role = role;
+  await req.user.save();
+
+  if (role === 'doctor') {
+    return res.redirect('/doctor/dashboard');
+  } else {
+    return res.redirect('/patient/dashboard');
+  }
+});
+
+// -------------------------------------------------------------------
 // Social auth routes
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+// -------------------------------------------------------------------
+
+// Google
+router.get('/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/auth/login', failureFlash: true }),
   (req, res) => {
-    req.flash('success', (req.authInfo && req.authInfo.message) || 'Logged in with Google.');
-    res.redirect('/profile');
+    if (!req.user.role) {
+      req.flash('info', 'Please select your role to continue.');
+      return res.redirect('/auth/select-role'); // ✅ fixed
+    }
+
+    // already has role -> go to dashboard/profile
+    if (req.user.role === 'doctor') {
+      return res.redirect('/doctor/dashboard');
+    } else if (req.user.role === 'patient') {
+      return res.redirect('/patient/dashboard');
+    } else {
+      return res.redirect('/profile');
+    }
   }
 );
 
+// Facebook
 router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 router.get('/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/auth/login', failureFlash: true }),
@@ -104,6 +159,7 @@ router.get('/facebook/callback',
   }
 );
 
+// Twitter
 router.get('/twitter', passport.authenticate('twitter'));
 router.get('/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/auth/login', failureFlash: true }),

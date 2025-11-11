@@ -69,7 +69,11 @@ FILE: views/patient/dashboard.ejs (UPDATED WITH GRANT/REVOKE LOGIC)
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5>My Medical Records</h5>
-                        <a href="/patient/upload" class="btn btn-sm btn-outline-primary">View All Records</a>
+                        <!-- <a href="/public/uploads" class="btn btn-sm btn-outline-primary">View All Records</a> -->
+                         <a href="/records/patient/<%= user._id %>" 
+   class="btn btn-sm btn-outline-primary">
+   View All Records
+</a>
                     </div>
                     <div class="card-body">
                         <% if (records && records.length > 0) { %>
@@ -146,6 +150,10 @@ FILE: views/patient/dashboard.ejs (UPDATED WITH GRANT/REVOKE LOGIC)
                                                            onclick="return confirm('Are you sure you want to revoke access for this doctor?')">
                                                             Revoke Access
                                                         </a>
+                                                        <a href="/chat/patient/<%= doctor._id %>" class="btn btn-sm btn-info mt-2">
+  Chat with Doctor
+</a>
+
                                                     </div>
                                                     <small class="text-muted d-block mt-1">
                                                         Granted on: <%= access.grantedAt ? access.grantedAt.toDateString() : 'Unknown' %>
@@ -179,6 +187,7 @@ FILE: views/patient/dashboard.ejs (UPDATED WITH GRANT/REVOKE LOGIC)
                                                            class="btn btn-sm btn-success">
                                                             Grant Access
                                                         </a>
+
                                                     </div>
                                                 <% } %>
                                             </div>

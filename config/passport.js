@@ -65,6 +65,7 @@ const configurePassport = () => {
         email: email || `google_${profile.id}@noemail.com`,
         name: profile.displayName,
         profilePhotoUrl: profile.photos?.[0]?.value || null,
+        role:null,
       });
       await newUser.save();
       return done(null, newUser);

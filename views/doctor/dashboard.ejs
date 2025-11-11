@@ -1,21 +1,52 @@
-<h1>Doctor Dashboard</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Doctor Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <!-- Dashboard Header -->
+    <div class="dashboard-card">
+      <h2 class="dashboard-header">Patients with Granted Access</h2>
+      <% if (accessList && accessList.length > 0) { %>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Access Granted On</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% accessList.forEach(access => { %>
+                <tr>
+                  <td><%= access.patientId.name || access.patientId.email %></td>
+                  <td><%= access.grantedAt.toDateString() %></td>
+                  <td>
+                    <a href="/records/patient/<%= access.patientId._id %>" class="btn-view">View Records</a>
+                      <a href="/chat/doctor/<%= access.patientId._id %>" class="btn btn-sm btn-primary">
+    Chat
+  </a>
 
-<h3>Patients with Granted Access</h3>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="alert-info">No patients have granted you access yet.</div>
+      <% } %>
+    </div>
 
-<ul>
-  <% if (accessList && accessList.length > 0) { %>
-    <% accessList.forEach(access => { %>
-  <tr>
-    <td><%= access.patientId.name || access.patientId.email %></td>
-    <td><%= access.grantedAt.toDateString() %></td>
-    <td>
-      <a href="/records/patient/<%= access.patientId._id %>" class="btn btn-primary">
-        View Records
-      </a>
-    </td>
-  </tr>
-<% }); %>
-  <% } else { %>
-    <li>No patients have granted you access yet.</li>
-  <% } %>
-</ul>
+    <!-- Navigation -->
+    <div class="dashboard-card">
+      <a href="/profile" class="btn-secondary">Back to Profile</a>
+    </div>
+  </div>
+</body>
+</html>

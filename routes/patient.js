@@ -62,7 +62,7 @@ router.post('/upload', requireRole('patient'), upload.single('file'), async (req
       patientId: req.user._id,
       title: req.body.title || 'Medical Record',
       description: req.body.description || '',
-      fileUrl: `/records/${req.file.filename}`
+      fileUrl: `/uploads/${req.file.filename}`
     });
 
     req.flash('success', 'Medical record uploaded successfully.');

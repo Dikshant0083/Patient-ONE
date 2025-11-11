@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   googleId:     { type: String, unique: true, sparse: true },
   facebookId:   { type: String, unique: true, sparse: true },
   twitterId:    { type: String, unique: true, sparse: true },
-  role: { type: String, enum: ['doctor', 'patient'], required: true },
+  role: { type: String, enum: ['doctor', 'patient'], default: null },
 }, { timestamps: true });
 
 // Hash password if modified

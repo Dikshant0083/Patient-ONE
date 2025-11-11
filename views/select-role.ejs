@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Role - MediConnect Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8fbff 0%, #e8f4f8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .form-container {
+            margin-top: 2rem;
+        }
+
+        .role-option {
+            display: block;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-option:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(52, 152, 219, 0.15);
+        }
+
+        .role-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .role-content {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .role-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .patient-icon {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+
+        .doctor-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .role-text {
+            flex-grow: 1;
+        }
+
+        .role-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.3rem;
+        }
+
+        .role-description {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .role-option input[type="radio"]:checked + .role-content {
+            background: linear-gradient(135deg, #e8f6f3, #d5eddb);
+        }
+
+        .role-option:has(input[type="radio"]:checked) {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, #e8f6f3, #d5eddb);
+        }
+
+        .role-option:has(input[type="radio"]:checked) .role-title {
+            color: #27ae60;
+        }
+
+        .continue-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .continue-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #1f618d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .continue-btn:active {
+            transform: translateY(0);
+        }
+
+        .security-note {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: #95a5a6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .security-icon {
+            width: 16px;
+            height: 16px;
+            background: #95a5a6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .role-content {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">M</div>
+            <h1>Select Your Role</h1>
+            <p class="subtitle">Choose your access level to continue to the portal</p>
+        </div>
+
+        <form action="/auth/select-role" method="POST" class="form-container">
+            <label class="role-option">
+                <input type="radio" name="role" value="patient" required>
+                <div class="role-content">
+                    <div class="role-icon patient-icon">👤</div>
+                    <div class="role-text">
+                        <div class="role-title">Patient</div>
+                        <div class="role-description">Access your medical records, appointments, and health information</div>
+                    </div>
+                </div>
+            </label>
+
+            <label class="role-option">
+                <input type="radio" name="role" value="doctor" required>
+                <div class="role-content">
+                    <div class="role-icon doctor-icon">⚕️</div>
+                    <div class="role-text">
+                        <div class="role-title">Doctor</div>
+                        <div class="role-description">Manage patient care, access clinical tools, and review cases</div>
+                    </div>
+                </div>
+            </label>
+
+            <button type="submit" class="continue-btn">Continue to Portal</button>
+        </form>
+
+        <div class="security-note">
+            <div class="security-icon">🔒</div>
+            <span>Secure connection protected by 256-bit encryption</span>
+        </div>
+    </div>
+</body>
+</html>

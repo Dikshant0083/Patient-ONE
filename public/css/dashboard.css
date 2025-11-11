@@ -1,0 +1,125 @@
+/* ================================
+   Dashboard Styles
+   ================================ */
+
+/* Base */
+body {
+  background: #f3f4f6;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+  line-height: 1.6;
+}
+
+/* Page wrapper */
+.dashboard-wrapper {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Cards */
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+.dashboard-header {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 1rem;
+}
+
+/* Tables */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+table th,
+table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+table thead {
+  background: #e0f2fe;
+  color: #1e40af;
+}
+
+table tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+table tr:hover {
+  background: #eff6ff;
+}
+
+/* Buttons */
+.btn-view {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.btn-view:hover {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  transform: translateY(-2px);
+}
+
+/* Alerts */
+.alert-info {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #e0f2fe;
+  color: #1e40af;
+  font-weight: 500;
+}
+
+/* Navigation buttons */
+.btn-secondary {
+  background: #16a34a;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-card {
+    padding: 1.5rem;
+  }
+
+  table th,
+  table td {
+    padding: 0.5rem 0.75rem;
+  }
+}
