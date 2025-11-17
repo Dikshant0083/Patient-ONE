@@ -3,37 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %> | My Auth App</title>
+  <title><%= title %> | Healthcare Platform</title>
   
   <!-- Main Layout CSS -->
   <link rel="stylesheet" href="/css/layout.css" />
-
+  
   <!-- Page-specific CSS -->
   <% if (title === 'Login' || title === 'Register') { %>
     <link rel="stylesheet" href="/css/auth.css" />
   <% } %>
-  <% if (title === 'Your Profile') { %>
+  <% if (title === 'Profile' || title === 'Your Profile') { %>
     <link rel="stylesheet" href="/css/profile.css" />
   <% } %>
-  
-   <% if (title === 'Home') { %>
+  <% if (title === 'Home') { %>
     <link rel="stylesheet" href="/css/home.css" />
   <% } %>
   <% if (title && title.includes('Dashboard')) { %>
-  <link rel="stylesheet" href="/css/dashboard.css" />
-<% } %>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  <% } %>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Modern header with improved styling -->
   <header>
     <div class="container">
       <nav>
         <div>
-          <a href="/">Home</a>
+          <a href="/">🏥 HealthConnect</a>
         </div>
         <div>
-
           <% if (user) { %>
             <a href="/profile">Profile</a>
             <a href="/auth/logout">Logout</a>
@@ -46,14 +48,14 @@
     </div>
   </header>
 
-  <!-- Flash Messages -->
+  <!-- Flash Messages with modern styling -->
   <div class="container">
-    <% if (messages.error && messages.error.length > 0) { %>
+    <% if (messages && messages.error && messages.error.length > 0) { %>
       <% messages.error.forEach(function(msg) { %>
         <div class="alert-error"><%= msg %></div>
       <% }) %>
     <% } %>
-    <% if (messages.success && messages.success.length > 0) { %>
+    <% if (messages && messages.success && messages.success.length > 0) { %>
       <% messages.success.forEach(function(msg) { %>
         <div class="alert-success"><%= msg %></div>
       <% }) %>
@@ -65,10 +67,10 @@
     <%- body %>
   </main>
 
-  <!-- Footer -->
+  <!-- Modern footer -->
   <footer>
     <div class="container">
-      &copy; <%= new Date().getFullYear() %> My Auth App. All rights reserved.
+      <p>&copy; <%= new Date().getFullYear() %> HealthConnect. Connecting healthcare, transforming lives.</p>
     </div>
   </footer>
 
