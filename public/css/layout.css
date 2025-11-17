@@ -23,20 +23,23 @@
 * {
   box-sizing: border-box;
 }
+
 html,
 body {
   height: 100%;
   margin: 0;
+  padding: 0;
 }
+
 body {
   color: #eaf6f1;
   background: radial-gradient(700px 300px at 10% 10%, rgba(124, 92, 255, 0.06), transparent 12%),
     radial-gradient(500px 260px at 90% 80%, rgba(6, 214, 160, 0.05), transparent 12%),
     linear-gradient(180deg, var(--bg-1), var(--bg-2));
-  padding: 2.25rem 1rem;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
 .container {
@@ -46,13 +49,13 @@ body {
   width: 100%;
 }
 
-/* Modern header with gradient background */
+/* Modern header with gradient background - FULL WIDTH */
 header {
   background: linear-gradient(135deg, rgba(124, 92, 255, 0.12), rgba(6, 214, 160, 0.08));
   border-bottom: 1px solid var(--glass-border);
-  padding: 1.25rem 0;
-  position: sticky;
-  top: 0;
+  padding: 1rem 0;
+  position: relative;
+  width: 100%;
   z-index: 1000;
   backdrop-filter: blur(12px);
   box-shadow: 0 8px 32px rgba(2, 8, 23, 0.3);
@@ -64,10 +67,13 @@ header nav {
   align-items: center;
   gap: 2rem;
   flex-wrap: wrap;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--gap);
 }
 
 header nav > div:first-child a {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: var(--accent-1);
   text-decoration: none;
@@ -92,10 +98,10 @@ header nav > div:last-child {
 header nav a {
   color: var(--muted);
   text-decoration: none;
-  padding: 0.6rem 1rem;
+  padding: 0.65rem 1.15rem;
   border-radius: 10px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -128,6 +134,7 @@ header nav a:hover::before {
   padding: 1rem 1.25rem;
   border-radius: 12px;
   margin-bottom: 1.5rem;
+  margin-top: 1rem;
   font-weight: 600;
   position: relative;
   border: 1px solid;
@@ -161,10 +168,11 @@ header nav a:hover::before {
 
 main {
   flex: 1;
-  padding: 2rem 0;
+  padding: 0;
+  width: 100%;
 }
 
-/* Modern footer with gradient */
+/* Modern footer with gradient - FULL WIDTH */
 footer {
   background: linear-gradient(135deg, rgba(124, 92, 255, 0.08), rgba(6, 214, 160, 0.04));
   border-top: 1px solid var(--glass-border);
@@ -173,27 +181,58 @@ footer {
   text-align: center;
   margin-top: auto;
   font-size: 0.9rem;
+  width: 100%;
+}
+
+footer .container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--gap);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  body {
-    padding: 1.5rem 0.75rem;
+  header {
+    padding: 0.875rem 0;
   }
+
   header nav {
     flex-direction: column;
     gap: 1rem;
+    padding: 0 1rem;
   }
+
+  header nav > div:first-child a {
+    font-size: 1.25rem;
+  }
+
   header nav > div:last-child {
     width: 100%;
     justify-content: center;
   }
+
   header nav a {
-    padding: 0.5rem 0.85rem;
-    font-size: 0.85rem;
+    padding: 0.55rem 0.95rem;
+    font-size: 0.9rem;
   }
+
   .alert-error,
   .alert-success {
     padding: 0.875rem 1rem;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  header nav > div:first-child a {
+    font-size: 1.15rem;
+  }
+
+  header nav a {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
   }
 }

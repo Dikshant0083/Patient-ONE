@@ -1,75 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Register</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/css/auth.css">
-</head>
-<body>
-  <div class="auth-wrapper">
-    <div class="auth-container">
-      <!-- Header -->
-      <div class="auth-header">
-        <!-- <img src="/images/logo.png" alt="HealthConnect" class="auth-logo"> -->
-        <h1 class="auth-title">Create an Account</h1>
-        <p class="auth-subtitle">Join HealthConnect and manage your health securely</p>
+<div class="auth-wrapper">
+  <div class="auth-container">
+    <!-- Header -->
+    <div class="auth-header">
+      <!-- <img src="/images/logo.png" alt="HealthConnect" class="auth-logo"> -->
+      <h1 class="auth-title">Create an Account</h1>
+      <p class="auth-subtitle">Join HealthConnect and manage your health securely</p>
+    </div>
+
+    <!-- Register Form -->
+    <form action="/auth/register" method="POST" class="auth-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="your@example.com">
       </div>
 
-      <!-- Register Form -->
-      <form action="/auth/register" method="POST" class="auth-form">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required placeholder="your@example.com">
-        </div>
-
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="••••••••">
-          <p class="form-help">Min 6 characters</p>
-        </div>
-
-        <div class="form-group">
-          <label for="confirm_password">Confirm Password</label>
-          <input type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••">
-        </div>
-
-        <div class="form-group">
-          <label for="role">Register As</label>
-          <select id="role" name="role" required>
-            <option value="">Select Role</option>
-            <option value="doctor">Doctor</option>
-            <option value="patient">Patient</option>
-          </select>
-        </div>
-
-        <button type="submit" class="btn-primary">Create Account</button>
-      </form>
-
-      <!-- Divider -->
-      <div class="divider"><span>or</span></div>
-
-      <!-- Social Login -->
-      <div class="social-login">
-        <a href="/auth/google" class="social-btn">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google">
-          Continue with Google
-        </a>
-        <a href="/auth/facebook" class="social-btn">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/1024px-2021_Facebook_icon.svg.png" alt="Facebook">
-          Continue with Facebook
-        </a>
-        <a href="/auth/twitter" class="social-btn">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png" alt="Twitter">
-          Continue with Twitter
-        </a>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="••••••••">
+        <p class="form-help">Minimum 6 characters required</p>
       </div>
 
-      <!-- Footer -->
-      <div class="auth-footer">
-        <p>Already have an account? <a href="/auth/login">Log in</a></p>
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••">
       </div>
+
+      <div class="form-group">
+        <label for="role">Register As</label>
+        <select id="role" name="role" required>
+          <option value="">Select Your Role</option>
+          <option value="doctor">Doctor</option>
+          <option value="patient">Patient</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-primary">Create Account</button>
+    </form>
+
+    <!-- Divider -->
+    <div class="divider"><span>or</span></div>
+
+    <!-- Social Login -->
+    <div class="social-login">
+      <a href="/auth/google" class="social-btn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google">
+        Continue with Google
+      </a>
+      <a href="/auth/facebook" class="social-btn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/1024px-2021_Facebook_icon.svg.png" alt="Facebook">
+        Continue with Facebook
+      </a>
+      <a href="/auth/twitter" class="social-btn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png" alt="Twitter">
+        Continue with Twitter
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="auth-footer">
+      <p>Already have an account? <a href="/auth/login">Log in</a></p>
     </div>
   </div>
-</body>
-</html>
+</div>
