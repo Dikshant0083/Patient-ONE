@@ -7,7 +7,8 @@ const express = require('express');
 const path = require('path');
 const socketIO = require('socket.io');
 const http = require('http');              // ✅ added
-
+const fs = require('fs');
+const https = require('https');            // ✅ added
 // Import configuration
 const { connectDatabase } = require('./config/database');
 const { configureMiddlewares } = require('./config/middlewares');
