@@ -30,23 +30,23 @@ const app = express();
 // ===================================================================
 // SERVER CREATION (ONLY CHANGE REQUIRED FOR DEPLOY)
 // ===================================================================
+// ===================================================================
+// SERVER (HTTPS locally, HTTP on Render)
+// ===================================================================
 let server;
 
 if (process.env.NODE_ENV === 'production') {
-    // ✅ Render provides HTTPS automatically
-    server = http.createServer(app);
+    // Render handles HTTPS automatically
+    server = require('http').createServer(app);
 } else {
-    // ✅ Keep your local HTTPS exactly as before
-    const https = require('https');
-    const fs = require('fs');
-
+    // Local HTTPS for teacher requirement
     const sslOptions = {
         key: fs.readFileSync("c:\\certs\\localhostkey.pem"),
         cert: fs.readFileSync("c:\\certs\\localhostcert.pem")
     };
-
     server = https.createServer(sslOptions, app);
 }
+
 
 // Attach socket.io to server
 const io = socketIO(server);
