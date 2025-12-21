@@ -149,24 +149,24 @@ router.get('/google/callback',
   }
 );
 
-// Facebook
-router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
-router.get('/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/auth/login', failureFlash: true }),
-  (req, res) => {
-    req.flash('success', (req.authInfo && req.authInfo.message) || 'Logged in with Facebook.');
-    res.redirect('/profile');
-  }
-);
+// // Facebook
+// router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+// router.get('/facebook/callback',
+//   passport.authenticate('facebook', { failureRedirect: '/auth/login', failureFlash: true }),
+//   (req, res) => {
+//     req.flash('success', (req.authInfo && req.authInfo.message) || 'Logged in with Facebook.');
+//     res.redirect('/profile');
+//   }
+// );
 
-// Twitter
-router.get('/twitter', passport.authenticate('twitter'));
-router.get('/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/auth/login', failureFlash: true }),
-  (req, res) => {
-    req.flash('success', (req.authInfo && req.authInfo.message) || 'Logged in with Twitter.');
-    res.redirect('/profile');
-  }
-);
+// // Twitter
+// router.get('/twitter', passport.authenticate('twitter'));
+// router.get('/twitter/callback',
+//   passport.authenticate('twitter', { failureRedirect: '/auth/login', failureFlash: true }),
+//   (req, res) => {
+//     req.flash('success', (req.authInfo && req.authInfo.message) || 'Logged in with Twitter.');
+//     res.redirect('/profile');
+//   }
+// );
 
 module.exports = router;
