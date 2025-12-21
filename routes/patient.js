@@ -1,56 +1,60 @@
 // ===================================================================
-// FILE: routes/patient.js (FULLY FIXED VERSION WITH DEBUGGING)
+// FILE: routes/patient.js (FINAL CORRECTED VERSION)
 // ===================================================================
+
 const express = require('express');
 const { requireRole } = require('../middleware/auth');
 const { upload } = require('../config/multer');
 const MedicalRecord = require('../models/MedicalRecord');
 const AccessControl = require('../models/AccessControl');
 const User = require('../models/User');
+const Appointment = require("../models/Appointment");
 const router = express.Router();
 
-// Patient dashboard - FIXED with proper debugging
+
+// ====================== PATIENT DASHBOARD ==========================
 router.get('/dashboard', requireRole('patient'), async (req, res) => {
   try {
-    console.log('Patient ID:', req.user._id); // Debug log
-    
     const records = await MedicalRecord.find({ patientId: req.user._id });
-    console.log('Found records:', records.length); // Debug log
-    
     const doctors = await User.find({ role: 'doctor' });
-    console.log('Found doctors:', doctors.length); // Debug log
-    
-    // IMPORTANT: Make sure accessList is properly fetched and not undefined
-    const accessList = await AccessControl.find({ 
-      patientId: req.user._id 
+
+    const accessList = await AccessControl.find({
+      patientId: req.user._id
     }).populate('doctorId');
-    
-    console.log('AccessList:', accessList); // Debug log
-    
-    // Ensure accessList is never undefined - provide empty array as fallback
+
     const safeAccessList = accessList || [];
 
-    res.render('patient/dashboard', { 
-      title: 'Patient Dashboard', 
-      records: records || [], 
-      doctors: doctors || [], 
-      accessList: safeAccessList  // Use safe version
+    // ⭐ Fetch patient appointments
+    const myAppointments = await Appointment.find({
+      patientId: req.user._id
+    })
+    .populate("doctorId")
+    .sort({ createdAt: -1 });
+
+    res.render('patient/dashboard', {
+      title: 'Patient Dashboard',
+      records,
+      doctors,
+      accessList: safeAccessList,
+      myAppointments
     });
+
   } catch (err) {
     console.error('Patient dashboard error:', err);
     req.flash('error', 'An error occurred loading the dashboard.');
-    
-    // Render with empty arrays to prevent undefined errors
-    res.render('patient/dashboard', { 
-      title: 'Patient Dashboard', 
-      records: [], 
-      doctors: [], 
-      accessList: []
+
+    res.render('patient/dashboard', {
+      title: 'Patient Dashboard',
+      records: [],
+      doctors: [],
+      accessList: [],
+      myAppointments: []
     });
   }
 });
 
-// Upload record
+
+// ===================== UPLOAD MEDICAL RECORD ========================
 router.post('/upload', requireRole('patient'), upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -67,6 +71,7 @@ router.post('/upload', requireRole('patient'), upload.single('file'), async (req
 
     req.flash('success', 'Medical record uploaded successfully.');
     res.redirect('/patient/dashboard');
+
   } catch (err) {
     console.error('Upload error:', err);
     req.flash('error', 'An error occurred while uploading the record.');
@@ -74,25 +79,26 @@ router.post('/upload', requireRole('patient'), upload.single('file'), async (req
   }
 });
 
-// Grant access to doctor
+
+// ======================== GRANT ACCESS =============================
 router.get('/access/:doctorId/grant', requireRole('patient'), async (req, res) => {
   try {
-    const { doctorId } = req.params;
+    const doctor = await User.findById(req.params.doctorId);
 
-    const doctor = await User.findById(doctorId);
     if (!doctor || doctor.role !== 'doctor') {
       req.flash('error', 'Doctor not found.');
       return res.redirect('/patient/dashboard');
     }
 
     await AccessControl.findOneAndUpdate(
-      { patientId: req.user._id, doctorId: doctorId },
+      { patientId: req.user._id, doctorId: req.params.doctorId },
       { status: 'granted', grantedAt: new Date() },
       { upsert: true }
     );
 
     req.flash('success', `Access granted to Dr. ${doctor.name || doctor.email}.`);
     res.redirect('/patient/dashboard');
+
   } catch (err) {
     console.error('Grant access error:', err);
     req.flash('error', 'An error occurred while granting access.');
@@ -100,19 +106,18 @@ router.get('/access/:doctorId/grant', requireRole('patient'), async (req, res) =
   }
 });
 
-// Revoke access from doctor
+
+// ======================== REVOKE ACCESS =============================
 router.get('/access/:doctorId/revoke', requireRole('patient'), async (req, res) => {
   try {
-    const { doctorId } = req.params;
-
-    const doctor = await User.findById(doctorId);
     await AccessControl.findOneAndUpdate(
-      { patientId: req.user._id, doctorId: doctorId },
+      { patientId: req.user._id, doctorId: req.params.doctorId },
       { status: 'revoked' }
     );
 
-    req.flash('success', `Access revoked from Dr. ${doctor?.name || doctor?.email || 'Doctor'}.`);
+    req.flash('success', `Access revoked successfully.`);
     res.redirect('/patient/dashboard');
+
   } catch (err) {
     console.error('Revoke access error:', err);
     req.flash('error', 'An error occurred while revoking access.');
@@ -120,5 +125,32 @@ router.get('/access/:doctorId/revoke', requireRole('patient'), async (req, res) 
   }
 });
 
-module.exports = router;
 
+// ===================== BOOK APPOINTMENT FORM ========================
+router.get("/book-appointment/:doctorId", requireRole('patient'), async (req, res) => {
+  const doctor = await User.findById(req.params.doctorId);
+
+  res.render("patient/bookAppointment", {
+    title: "Book Appointment",
+    doctor
+  });
+});
+
+
+// ====================== BOOK APPOINTMENT POST ======================
+router.post("/book-appointment/:doctorId", requireRole('patient'), async (req, res) => {
+  const { date, time, reason } = req.body;
+
+  await Appointment.create({
+    patientId: req.user._id,
+    doctorId: req.params.doctorId,
+    date,
+    time,
+    reason
+  });
+
+  req.flash("success", "Appointment request sent.");
+  res.redirect("/patient/dashboard");
+});
+
+module.exports = router;

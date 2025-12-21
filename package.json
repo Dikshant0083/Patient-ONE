@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "jest"
+    "test": "cross-env NODE_ENV=test jest --runInBand --forceExit",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose",
+    "test:auth": "jest auth.test.js",
+    "test:profile": "jest profile.test.js"
   },
   "keywords": [],
   "author": "",
@@ -11,7 +16,8 @@
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "connect-flash": "^0.1.1",
-    "dotenv": "^17.2.1",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-ejs-layouts": "^2.5.1",
@@ -24,13 +30,19 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
-    "socket.io": "^4.8.1"
+    "razorpay": "^2.9.6",
+    "redis": "^5.9.0",
+    "socket.io": "^4.8.1",
+    "stripe": "^20.1.0"
   },
   "description": "",
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/supertest": "^6.0.3",
+    "cross-env": "^10.1.0",
     "jest": "^30.2.0",
-    "mongodb-memory-server": "^10.3.0",
+    "mongodb-memory-server": "^10.4.2",
+    "socket.io-client": "^4.8.1",
     "supertest": "^7.1.4"
   }
 }

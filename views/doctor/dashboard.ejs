@@ -1,52 +1,453 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Doctor Dashboard</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/css/dashboard.css">
+    <title>Doctor Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        /* Extra Doctor Dashboard Styles */
+        .request-section {
+            margin-bottom: 2rem;
+        }
+
+        .request-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .request-form-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .request-form-title i {
+            color: #06b6d4;
+        }
+
+        .form-row-custom {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+        }
+
+        .request-form select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .request-form select:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .request-btn {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            align-self: flex-end;
+            white-space: nowrap;
+        }
+
+        .request-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .patients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .patient-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .patient-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .patient-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+
+        .patient-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .patient-email {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .access-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge-granted {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .patient-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .patient-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 0.4rem;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-records {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn-records:hover {
+            background: #bfdbfe;
+            transform: translateY(-2px);
+            color: #1e40af;
+        }
+
+        .btn-chat {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .btn-chat:hover {
+            background: #c7d2fe;
+            transform: translateY(-2px);
+            color: #3730a3;
+        }
+
+        .granted-date {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            margin-bottom: 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row-custom {
+                grid-template-columns: 1fr;
+            }
+
+            .request-btn {
+                width: 100%;
+                align-self: auto;
+            }
+
+            .patients-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="dashboard-wrapper">
-    <!-- Dashboard Header -->
-    <div class="dashboard-card">
-      <h2 class="dashboard-header">Patients with Granted Access</h2>
-      <% if (accessList && accessList.length > 0) { %>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Patient</th>
-                <th>Access Granted On</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% accessList.forEach(access => { %>
-                <tr>
-                  <td><%= access.patientId.name || access.patientId.email %></td>
-                  <td><%= access.grantedAt.toDateString() %></td>
-                  <td>
-                    <a href="/records/patient/<%= access.patientId._id %>" class="btn-view">View Records</a>
-                      <a href="/chat/doctor/<%= access.patientId._id %>" class="btn btn-sm btn-primary">
-    Chat
-  </a>
 
-                  </td>
-                </tr>
-              <% }); %>
-            </tbody>
-          </table>
+<div class="main-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>MediCare</h2>
+            <p>Doctor Portal</p>
         </div>
-      <% } else { %>
-        <div class="alert-info">No patients have granted you access yet.</div>
-      <% } %>
-    </div>
 
-    <!-- Navigation -->
-    <div class="dashboard-card">
-      <a href="/profile" class="btn-secondary">Back to Profile</a>
+        <ul class="sidebar-nav">
+            <li><a href="/doctor/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="/doctor/appointments"><i class="fas fa-calendar-alt"></i> Appointments</a></li>
+            <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+            <li><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- CONTENT -->
+    <div class="content-wrapper">
+
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Welcome to your doctor portal</p>
+            </div>
+            <div class="header-user">
+                <div>
+                    <p style="margin-bottom: 0; font-weight: 600;">Dr. <%= user.name || user.email %></p>
+                    <small style="color: #9ca3af;">Medical Professional</small>
+                </div>
+                <div class="user-avatar">
+                    <%= (user.name || user.email).charAt(0).toUpperCase() %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        <% if (messages && messages.error && messages.error.length > 0) { %>
+            <% messages.error.forEach(error => { %>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% }) %>
+        <% } %>
+
+        <% if (messages && messages.success && messages.success.length > 0) { %>
+            <% messages.success.forEach(success => { %>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> <%= success %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% }) %>
+        <% } %>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
+                <div class="stat-number"><%= accessList ? accessList.length : 0 %></div>
+                <div class="stat-label">Authorized Patients</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-hourglass-half"></i></div>
+                <div class="stat-number"><%= pendingRequests ? pendingRequests.length : 0 %></div>
+                <div class="stat-label">Pending Requests</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                <div class="stat-number"><%= allPatients ? allPatients.length : 0 %></div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-file-medical"></i></div>
+                <div class="stat-number"><%= accessList.length > 0 ? 'Ready' : 'N/A' %></div>
+                <div class="stat-label">Status</div>
+            </div>
+        </div>
+
+        <!-- Request Access Section -->
+        <div class="request-section">
+            <div class="request-form">
+                <h3 class="request-form-title">
+                    <i class="fas fa-paper-plane"></i> Request Access to Patient Records
+                </h3>
+                <form method="POST" id="requestForm">
+                    <div class="form-row-custom">
+                        <div>
+                            <label class="form-label" style="margin-bottom: 0.5rem; font-weight: 600;">Select Patient</label>
+                            <select name="patientId" id="patientSelect" required>
+                                <option value="">Choose a patient...</option>
+                                <% if (allPatients && allPatients.length > 0) { %>
+                                    <% allPatients.forEach(patient => { %>
+                                        <% const hasAccess = accessList.find(a => a.patientId._id.toString() === patient._id.toString()); %>
+                                        <% if (!hasAccess) { %>
+                                            <option value="<%= patient._id %>"><%= patient.name || patient.email %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+                        <button type="submit" class="request-btn">
+                            <i class="fas fa-send"></i> Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Patients with Granted Access -->
+        <div class="dashboard-card">
+            <div class="card-header-section">
+                <h2 class="card-title"><i class="fas fa-user-check"></i> My Patients</h2>
+                <a href="/doctor/appointments" class="view-all-btn">
+                    <i class="fas fa-calendar-alt"></i> View Appointments
+                </a>
+            </div>
+
+            <% if (accessList && accessList.length > 0) { %>
+                <div class="patients-grid">
+                    <% accessList.forEach(access => { %>
+                        <div class="patient-card">
+                            <div class="patient-avatar">
+                                <%= (access.patientId.name || access.patientId.email).charAt(0).toUpperCase() %>
+                            </div>
+
+                            <h3 class="patient-name"><%= access.patientId.name || 'Patient' %></h3>
+                            <p class="patient-email"><%= access.patientId.email %></p>
+
+                            <span class="access-badge badge-granted">✓ Access Granted</span>
+
+                            <div class="patient-actions">
+                                <a href="/records/patient/<%= access.patientId._id %>" class="patient-btn btn-records">
+                                    <i class="fas fa-file-medical"></i> View Records
+                                </a>
+                                <a href="/chat/doctor/<%= access.patientId._id %>" class="patient-btn btn-chat">
+                                    <i class="fas fa-comments"></i> Chat
+                                </a>
+                            </div>
+
+                            <p class="granted-date">
+                                <i class="fas fa-calendar-check"></i> 
+                                Access since <%= new Date(access.grantedAt).toLocaleDateString() %>
+                            </p>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-user-slash"></i></div>
+                    <p class="empty-text">No patients have granted access yet</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Pending Access Requests -->
+        <% if (pendingRequests && pendingRequests.length > 0) { %>
+            <div class="dashboard-card">
+                <div class="card-header-section">
+                    <h2 class="card-title"><i class="fas fa-hourglass-half"></i> Pending Requests</h2>
+                </div>
+
+                <div class="patients-grid">
+                    <% pendingRequests.forEach(request => { %>
+                        <div class="patient-card">
+                            <div class="patient-avatar">
+                                <%= (request.patientId.name || request.patientId.email).charAt(0).toUpperCase() %>
+                            </div>
+
+                            <h3 class="patient-name"><%= request.patientId.name || 'Patient' %></h3>
+                            <p class="patient-email"><%= request.patientId.email %></p>
+
+                            <span class="access-badge badge-pending">⏱ Pending</span>
+
+                            <p style="color: #6b7280; font-size: 0.9rem; margin-top: 1rem;">
+                                <i class="fas fa-clock"></i> Waiting for patient approval
+                            </p>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Footer Navigation -->
+        <div class="footer-nav">
+            <a href="/profile" class="nav-btn profile">
+                <i class="fas fa-user"></i> My Profile
+            </a>
+            <a href="/auth/logout" class="nav-btn logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
     </div>
-  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Handle request form submission
+    document.getElementById('requestForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const patientId = document.getElementById('patientSelect').value;
+        if (patientId) {
+            this.action = `/doctor/request/${patientId}`;
+            this.submit();
+        }
+    });
+
+    // Active link highlighting
+    document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        if (link.href === window.location.href) {
+            link.classList.add('active');
+        }
+    });
+</script>
+
 </body>
 </html>

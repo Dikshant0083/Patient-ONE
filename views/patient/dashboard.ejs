@@ -1,6 +1,3 @@
-<!-- ===================================================================
-FILE: views/patient/dashboard.ejs (UPDATED WITH GRANT/REVOKE LOGIC)
-=================================================================== -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,261 +5,1081 @@ FILE: views/patient/dashboard.ejs (UPDATED WITH GRANT/REVOKE LOGIC)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* ================================
+           Dashboard Styles - Professional Design
+           ================================ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1f2937;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo h2 {
+            color: #06b6d4;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-logo p {
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin: 0.5rem 0;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            padding-left: 2rem;
+        }
+
+        .sidebar-nav i {
+            margin-right: 1rem;
+            width: 20px;
+        }
+
+        /* Content Area */
+        .content-wrapper {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 2rem;
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .dashboard-header p {
+            color: #6b7280;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem;
+        }
+
+        .stat-icon.blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .stat-icon.green {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .stat-icon.purple {
+            background: #e9d5ff;
+            color: #9333ea;
+        }
+
+        .stat-icon.orange {
+            background: #fed7aa;
+            color: #ea580c;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Alert Messages */
+        .alert {
+            margin-bottom: 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* Main Cards */
+        .dashboard-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .card-header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title i {
+            color: #06b6d4;
+        }
+
+        .view-all-btn {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .view-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+            color: white;
+        }
+
+        /* Upload Form */
+        .form-group-custom {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group-custom label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .form-group-custom input,
+        .form-group-custom textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group-custom input:focus,
+        .form-group-custom textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .records-table thead {
+            background: #f9fafb;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .records-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .records-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            color: #6b7280;
+        }
+
+        .records-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .records-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-view, .btn-delete {
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            border: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-view {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn-view:hover {
+            background: #bfdbfe;
+            transform: translateY(-2px);
+            color: #1e40af;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+            color: #991b1b;
+        }
+
+        /* Appointments Table */
+        .appointment-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        /* Doctor Cards */
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .doctor-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .doctor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+
+        .doctor-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .doctor-email {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .access-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge-granted {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-none {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .doctor-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .doctor-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 0.4rem;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-grant {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: white;
+        }
+
+        .btn-grant:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+            color: white;
+        }
+
+        .btn-revoke {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-revoke:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+            color: #991b1b;
+        }
+
+        .btn-chat {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .btn-chat:hover {
+            background: #c7d2fe;
+            transform: translateY(-2px);
+            color: #3730a3;
+        }
+
+        .btn-appointment {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn-appointment:hover {
+            background: #bfdbfe;
+            transform: translateY(-2px);
+            color: #1e40af;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            border-left: 4px solid;
+        }
+
+        .summary-card.granted {
+            border-left-color: #16a34a;
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+        }
+
+        .summary-card.pending {
+            border-left-color: #ea580c;
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+        }
+
+        .summary-card.revoked {
+            border-left-color: #6b7280;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        }
+
+        .summary-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+            color: #4b5563;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Footer Navigation */
+        .footer-nav {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn.profile {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .nav-btn.profile:hover {
+            background: #e5e7eb;
+        }
+
+        .nav-btn.logout {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .nav-btn.logout:hover {
+            background: #fecaca;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .content-wrapper {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+                padding: 1.5rem;
+            }
+
+            .dashboard-header {
+                padding: 1rem 1.5rem;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -260px;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .content-wrapper {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .records-table th,
+            .records-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .doctor-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <%
-      // Safety check to ensure accessList is defined
-      if (typeof accessList === 'undefined') {
-        accessList = [];
-      }
-    %>
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <h2><%= title %></h2>
-                
-                <!-- Flash Messages -->
-                <% if (messages.error && messages.error.length > 0) { %>
-                    <% messages.error.forEach(error => { %>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <%= error %>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <% }); %>
-                <% } %>
+<div class="main-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>MediCare</h2>
+            <p>Patient Portal</p>
+        </div>
 
-                <% if (messages.success && messages.success.length > 0) { %>
-                    <% messages.success.forEach(success => { %>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <%= success %>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <% }); %>
-                <% } %>
+        <ul class="sidebar-nav">
+            <li><a href="/patient/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="/profile"><i class="fas fa-user"></i> My Profile</a></li>
+            <li><a href="/records/patient/<%= user._id %>"><i class="fas fa-file-medical"></i> Medical Records</a></li>
+            <li><a href="/patient/dashboard#appointments"><i class="fas fa-calendar"></i> Appointments</a></li>
+            <li><a href="/patient/dashboard#doctors"><i class="fas fa-stethoscope"></i> Doctors</a></li>
+            <li><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </aside>
 
-                <!-- Upload Medical Record Section -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5>Upload Medical Record</h5>
-                    </div>
-                    <div class="card-body">
-                        <form action="/patient/upload" method="POST" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Title</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="file" class="form-label">Select File</label>
-                                <input type="file" class="form-control" id="file" name="file" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Upload Record</button>
-                        </form>
-                    </div>
+    <!-- CONTENT -->
+    <div class="content-wrapper">
+
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Welcome to your medical records portal</p>
+            </div>
+            <div class="header-user">
+                <div>
+                    <p style="margin-bottom: 0; font-weight: 600;"><%= user.name || user.email %></p>
+                    <small style="color: #9ca3af;">Patient</small>
                 </div>
-
-                <!-- My Medical Records Section -->
-                <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5>My Medical Records</h5>
-                        <!-- <a href="/public/uploads" class="btn btn-sm btn-outline-primary">View All Records</a> -->
-                         <a href="/records/patient/<%= user._id %>" 
-   class="btn btn-sm btn-outline-primary">
-   View All Records
-</a>
-                    </div>
-                    <div class="card-body">
-                        <% if (records && records.length > 0) { %>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Title</th>
-                                            <th>Description</th>
-                                            <th>Upload Date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% records.slice(0, 5).forEach(record => { %>
-                                        <tr>
-                                            <td><%= record.title %></td>
-                                            <td><%= record.description || 'No description' %></td>
-                                            <td><%= record.createdAt ? record.createdAt.toDateString() : 'Date not available' %></td>
-                                            <td>
-                                                <a href="<%= record.fileUrl %>" class="btn btn-sm btn-primary" target="_blank">
-                                                    View File
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <% }); %>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <% if (records.length > 5) { %>
-                                <p class="text-muted">Showing 5 of <%= records.length %> records. <a href="/patient/upload">View all records</a></p>
-                            <% } %>
-                        <% } else { %>
-                            <div class="alert alert-info">
-                                You haven't uploaded any medical records yet.
-                            </div>
-                        <% } %>
-                    </div>
-                </div>
-
-                <!-- Grant/Revoke Access to Doctors Section -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Grant/Revoke Access to Doctors</h5>
-                    </div>
-                    <div class="card-body">
-                        <% if (doctors && doctors.length > 0) { %>
-                            <div class="row">
-                                <% doctors.forEach(doctor => { %>
-                                    <div class="col-md-6 col-lg-4 mb-3">
-                                        <div class="card h-100">
-                                            <div class="card-body">
-                                                <h6 class="card-title">
-                                                    <%= doctor.name || 'Dr. ' + doctor.email %>
-                                                </h6>
-                                                <p class="card-text text-muted">
-                                                    <%= doctor.email %>
-                                                </p>
-                                                
-                                                <%
-                                                  // Find the access control record for this doctor
-                                                  const access = accessList.find(a => 
-                                                    a.doctorId && a.doctorId._id && 
-                                                    a.doctorId._id.toString() === doctor._id.toString()
-                                                  );
-                                                %>
-                                                
-                                                <% if (access && access.status === 'granted') { %>
-                                                    <!-- Doctor has granted access - show REVOKE button -->
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="badge bg-success">Access Granted</span>
-                                                        <a href="/patient/access/<%= doctor._id %>/revoke" 
-                                                           class="btn btn-sm btn-danger"
-                                                           onclick="return confirm('Are you sure you want to revoke access for this doctor?')">
-                                                            Revoke Access
-                                                        </a>
-                                                        <a href="/chat/patient/<%= doctor._id %>" class="btn btn-sm btn-info mt-2">
-  Chat with Doctor
-</a>
-
-                                                    </div>
-                                                    <small class="text-muted d-block mt-1">
-                                                        Granted on: <%= access.grantedAt ? access.grantedAt.toDateString() : 'Unknown' %>
-                                                    </small>
-                                                <% } else if (access && access.status === 'pending') { %>
-                                                    <!-- Doctor has pending request - show GRANT button -->
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="badge bg-warning">Request Pending</span>
-                                                        <a href="/patient/access/<%= doctor._id %>/grant" 
-                                                           class="btn btn-sm btn-success">
-                                                            Grant Access
-                                                        </a>
-                                                    </div>
-                                                    <small class="text-muted d-block mt-1">
-                                                        Requested on: <%= access.createdAt ? access.createdAt.toDateString() : 'Unknown' %>
-                                                    </small>
-                                                <% } else if (access && access.status === 'revoked') { %>
-                                                    <!-- Doctor had access but it was revoked - show GRANT button -->
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="badge bg-secondary">Access Revoked</span>
-                                                        <a href="/patient/access/<%= doctor._id %>/grant" 
-                                                           class="btn btn-sm btn-success">
-                                                            Grant Access
-                                                        </a>
-                                                    </div>
-                                                <% } else { %>
-                                                    <!-- No access record exists - show GRANT button -->
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="badge bg-secondary">No Access</span>
-                                                        <a href="/patient/access/<%= doctor._id %>/grant" 
-                                                           class="btn btn-sm btn-success">
-                                                            Grant Access
-                                                        </a>
-
-                                                    </div>
-                                                <% } %>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% }); %>
-                            </div>
-                        <% } else { %>
-                            <div class="alert alert-info">
-                                No doctors are registered in the system yet.
-                            </div>
-                        <% } %>
-                    </div>
-                </div>
-
-                <!-- Access Requests Summary (Optional) -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5>Access Summary</h5>
-                    </div>
-                    <div class="card-body">
-                        <%
-                          const grantedCount = accessList.filter(a => a.status === 'granted').length;
-                          const pendingCount = accessList.filter(a => a.status === 'pending').length;
-                          const revokedCount = accessList.filter(a => a.status === 'revoked').length;
-                        %>
-                        <div class="row text-center">
-                            <div class="col-md-4">
-                                <div class="card bg-success text-white">
-                                    <div class="card-body">
-                                        <h3><%= grantedCount %></h3>
-                                        <p>Granted Access</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card bg-warning text-white">
-                                    <div class="card-body">
-                                        <h3><%= pendingCount %></h3>
-                                        <p>Pending Requests</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card bg-secondary text-white">
-                                    <div class="card-body">
-                                        <h3><%= revokedCount %></h3>
-                                        <p>Revoked Access</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Navigation -->
-                <div class="mt-4">
-                    <a href="/profile" class="btn btn-secondary">My Profile</a>
-                    <a href="/auth/logout" class="btn btn-outline-secondary">Logout</a>
+                <div class="user-avatar">
+                    <%= (user.name || user.email).charAt(0).toUpperCase() %>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Optional: Auto-hide alerts after 5 seconds -->
-    <script>
-        setTimeout(function() {
-            var alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
-                var bootstrapAlert = new bootstrap.Alert(alert);
-                bootstrapAlert.close();
-            });
-        }, 5000);
-    </script>
+        <!-- Flash Messages -->
+        <% if (messages && messages.error && messages.error.length > 0) { %>
+            <% messages.error.forEach(error => { %>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% }) %>
+        <% } %>
+
+        <% if (messages && messages.success && messages.success.length > 0) { %>
+            <% messages.success.forEach(success => { %>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> <%= success %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% }) %>
+        <% } %>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-file-medical"></i></div>
+                <div class="stat-number"><%= records ? records.length : 0 %></div>
+                <div class="stat-label">Total Records</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-user-md"></i></div>
+                <div class="stat-number"><%= accessList ? accessList.filter(a => a.status === 'granted').length : 0 %></div>
+                <div class="stat-label">Authorized Doctors</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-calendar-check"></i></div>
+                <div class="stat-number"><%= myAppointments ? myAppointments.filter(a => a.status === 'approved').length : 0 %></div>
+                <div class="stat-label">Confirmed Appointments</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-hourglass-half"></i></div>
+                <div class="stat-number"><%= myAppointments ? myAppointments.filter(a => a.status === 'pending').length : 0 %></div>
+                <div class="stat-label">Pending Requests</div>
+            </div>
+        </div>
+
+        <!-- Upload Record -->
+        <div class="dashboard-card">
+            <div class="card-header-section">
+                <h2 class="card-title"><i class="fas fa-cloud-upload-alt"></i> Upload Medical Record</h2>
+            </div>
+
+            <form action="/patient/upload" method="POST" enctype="multipart/form-data">
+                <div class="form-group-custom">
+                    <label><i class="fas fa-heading"></i> Title</label>
+                    <input type="text" name="title" required placeholder="e.g., Blood Test Report">
+                </div>
+
+                <div class="form-group-custom">
+                    <label><i class="fas fa-align-left"></i> Description</label>
+                    <textarea name="description" placeholder="Add any additional notes..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group-custom">
+                    <label><i class="fas fa-file"></i> Select File</label>
+                    <input type="file" name="file" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                </div>
+
+                <button type="submit" class="upload-btn"><i class="fas fa-check"></i> Upload Record</button>
+            </form>
+        </div>
+
+        <!-- My Medical Records -->
+        <div class="dashboard-card">
+            <div class="card-header-section">
+                <h2 class="card-title"><i class="fas fa-folder-medical"></i> My Medical Records</h2>
+                <a href="/records/patient/<%= user._id %>" class="view-all-btn"><i class="fas fa-arrow-right"></i> View All</a>
+            </div>
+
+            <div class="table-wrapper">
+                <% if (records && records.length > 0) { %>
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% records.slice(0, 5).forEach(record => { %>
+                                <tr>
+                                    <td><strong><%= record.title %></strong></td>
+                                    <td><%= record.description || 'No description' %></td>
+                                    <td><%= new Date(record.createdAt).toLocaleDateString() %></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="<%= record.fileUrl %>" target="_blank" class="btn-view">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            <a href="/records/delete/<%= record._id %>"
+                                               class="btn-delete"
+                                               onclick="return confirm('Delete this record?')">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+                        <p class="empty-text">No medical records uploaded yet. Start by uploading your first record.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- My Appointments -->
+        <div class="dashboard-card" id="appointments">
+            <div class="card-header-section">
+                <h2 class="card-title"><i class="fas fa-calendar-alt"></i> My Appointments</h2>
+            </div>
+
+            <div class="table-wrapper">
+                <% if (myAppointments && myAppointments.length > 0) { %>
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% myAppointments.forEach(a => { %>
+                                <tr>
+                                    <td><strong><%= a.doctorId.name || a.doctorId.email %></strong></td>
+                                    <td><%= a.date %></td>
+                                    <td><%= a.time %></td>
+                                    <td><%= a.reason || '—' %></td>
+                                    <td>
+                                        <% if (a.status === 'pending') { %>
+                                            <span class="appointment-badge badge-pending"><i class="fas fa-clock"></i> Pending</span>
+                                        <% } else if (a.status === 'approved') { %>
+                                            <span class="appointment-badge badge-approved"><i class="fas fa-check"></i> Approved</span>
+                                        <% } else { %>
+                                            <span class="appointment-badge badge-rejected"><i class="fas fa-times"></i> Rejected</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-calendar"></i></div>
+                        <p class="empty-text">No appointments scheduled yet. Book your first appointment with a doctor.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Doctors & Access Control -->
+        <div class="dashboard-card" id="doctors">
+            <div class="card-header-section">
+                <h2 class="card-title"><i class="fas fa-stethoscope"></i> Manage Doctor Access</h2>
+            </div>
+
+            <% if (doctors && doctors.length > 0) { %>
+                <div class="doctors-grid">
+                    <% doctors.forEach(doctor => { 
+                        const access = accessList.find(a =>
+                            a.doctorId && a.doctorId._id.toString() === doctor._id.toString()
+                        );
+                    %>
+                        <div class="doctor-card">
+                            <div class="doctor-avatar">
+                                <%= (doctor.name || doctor.email).charAt(0).toUpperCase() %>
+                            </div>
+
+                            <h3 class="doctor-name"><%= doctor.name || 'Doctor' %></h3>
+                            <p class="doctor-email"><%= doctor.email %></p>
+
+                            <% if (access && access.status === 'granted') { %>
+                                <span class="access-badge badge-granted">✓ Access Granted</span>
+
+                                <div class="doctor-actions">
+                                    <a href="/chat/patient/<%= doctor._id %>" class="doctor-btn btn-chat">
+                                        <i class="fas fa-comments"></i> Chat
+                                    </a>
+                                    <a href="/patient/book-appointment/<%= doctor._id %>" class="doctor-btn btn-appointment">
+                                        <i class="fas fa-calendar-plus"></i> Book Appointment
+                                    </a>
+                                    <a href="/patient/access/<%= doctor._id %>/revoke"
+                                       class="doctor-btn btn-revoke"
+                                       onclick="return confirm('Revoke access from this doctor?')">
+                                        <i class="fas fa-ban"></i> Revoke Access
+                                    </a>
+                                </div>
+
+                            <% } else if (access && access.status === 'pending') { %>
+                                <span class="access-badge badge-pending">⏱ Pending</span>
+
+                                <div class="doctor-actions">
+                                    <a href="/patient/access/<%= doctor._id %>/grant" class="doctor-btn btn-grant">
+                                        <i class="fas fa-check"></i> Approve Request
+                                    </a>
+                                </div>
+
+                            <% } else { %>
+                                <span class="access-badge badge-none">No Access</span>
+
+                                <div class="doctor-actions">
+                                    <a href="/patient/access/<%= doctor._id %>/grant" class="doctor-btn btn-grant">
+                                        <i class="fas fa-lock-open"></i> Grant Access
+                                    </a>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-user-md"></i></div>
+                    <p class="empty-text">No doctors registered yet.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Access Summary -->
+        <div class="dashboard-card">
+            <div class="card-header-section">
+                <h2 class="card-title"><i class="fas fa-shield-alt"></i> Access Summary</h2>
+            </div>
+
+            <% 
+              const grantedCount = accessList.filter(a => a.status === 'granted').length;
+              const pendingCount = accessList.filter(a => a.status === 'pending').length;
+              const revokedCount = accessList.filter(a => a.status === 'revoked').length;
+            %>
+
+            <div class="summary-grid">
+                <div class="summary-card granted">
+                    <div class="summary-number"><%= grantedCount %></div>
+                    <div class="summary-label">Access Granted</div>
+                </div>
+
+                <div class="summary-card pending">
+                    <div class="summary-number"><%= pendingCount %></div>
+                    <div class="summary-label">Pending Requests</div>
+                </div>
+
+                <div class="summary-card revoked">
+                    <div class="summary-number"><%= revokedCount %></div>
+                    <div class="summary-label">Access Revoked</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Navigation -->
+        <div class="footer-nav">
+            <a href="/profile" class="nav-btn profile">
+                <i class="fas fa-user"></i> My Profile
+            </a>
+            <a href="/auth/logout" class="nav-btn logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Active link highlighting
+    document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        if (link.href === window.location.href) {
+            link.classList.add('active');
+        }
+    });
+</script>
+
 </body>
 </html>

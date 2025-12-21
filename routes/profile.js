@@ -1,4 +1,3 @@
-
 // ===================================================================
 // FILE: routes/profile.js
 // ===================================================================
@@ -9,8 +8,22 @@ const User = require('../models/User');
 const router = express.Router();
 
 // Profile page
-router.get('/', isAuthenticated, (req, res) => {
-  res.render('profile', { title: 'Your Profile' });
+router.get('/', isAuthenticated, async (req, res) => {
+  try {
+    // req.user is already the full user object from deserializeUser
+    // Just need to convert role to isDoctor for the template
+    const isDoctor = req.user && req.user.role === 'doctor';
+    
+    // Pass isDoctor to the view so it knows which dashboard to link to
+    res.render('profile', { 
+      title: 'Your Profile',
+      isDoctor: isDoctor
+    });
+  } catch (e) {
+    console.error('Profile page error:', e);
+    req.flash('error', 'Error loading profile.');
+    res.redirect('/');
+  }
 });
 
 // Update profile

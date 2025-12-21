@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <% 
+    // --- FIX: Prevent crash when title is undefined ---
+    if (!title) { 
+      title = "Healthcare Platform"; 
+    }
+  %>
+
   <title><%= title %> | Healthcare Platform</title>
   
   <!-- Main Layout CSS -->
@@ -12,12 +20,15 @@
   <% if (title === 'Login' || title === 'Register') { %>
     <link rel="stylesheet" href="/css/auth.css" />
   <% } %>
+
   <% if (title === 'Profile' || title === 'Your Profile') { %>
     <link rel="stylesheet" href="/css/profile.css" />
   <% } %>
+
   <% if (title === 'Home') { %>
     <link rel="stylesheet" href="/css/home.css" />
   <% } %>
+
   <% if (title && title.includes('Dashboard')) { %>
     <link rel="stylesheet" href="/css/dashboard.css" />
   <% } %>
@@ -28,33 +39,16 @@
 </head>
 <body>
 
-  <!-- Modern header with improved styling -->
-  <header>
-    <div class="container">
-      <nav>
-        <div>
-          <a href="/">🏥 HealthConnect</a>
-        </div>
-        <div>
-          <% if (user) { %>
-            <a href="/profile">Profile</a>
-            <a href="/auth/logout">Logout</a>
-          <% } else { %>
-            <a href="/auth/login">Login</a>
-            <a href="/auth/register">Register</a>
-          <% } %>
-        </div>
-      </nav>
-    </div>
-  </header>
+  <!-- HEADER REMOVED - No more header strip -->
 
-  <!-- Flash Messages with modern styling -->
+  <!-- Flash Messages -->
   <div class="container">
     <% if (messages && messages.error && messages.error.length > 0) { %>
       <% messages.error.forEach(function(msg) { %>
         <div class="alert-error"><%= msg %></div>
       <% }) %>
     <% } %>
+
     <% if (messages && messages.success && messages.success.length > 0) { %>
       <% messages.success.forEach(function(msg) { %>
         <div class="alert-success"><%= msg %></div>
@@ -70,7 +64,7 @@
   <!-- Modern footer -->
   <footer>
     <div class="container">
-      <p>&copy; <%= new Date().getFullYear() %> HealthConnect. Connecting healthcare, transforming lives.</p>
+      <p>&copy; <%= new Date().getFullYear() %> Doctor-Patient-Hub. Connecting healthcare, transforming lives.</p>
     </div>
   </footer>
 

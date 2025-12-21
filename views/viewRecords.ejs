@@ -1,67 +1,391 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title><%= title %></title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Load custom dashboard styles -->
-  <link rel="stylesheet" href="/css/dashboard.css">
+    <title><%= title %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Extra styles for view records page */
+        .records-page-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .page-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .page-breadcrumb a {
+            color: #06b6d4;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .page-breadcrumb a:hover {
+            color: #0891b2;
+        }
+
+        .page-breadcrumb span {
+            color: #d1d5db;
+            margin: 0 0.5rem;
+        }
+
+        .records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .records-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .records-header h1 i {
+            color: #06b6d4;
+        }
+
+        .patient-summary {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            border-left: 4px solid #06b6d4;
+        }
+
+        .patient-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.75rem;
+            flex-shrink: 0;
+        }
+
+        .patient-details h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .patient-details p {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin: 0.25rem 0;
+        }
+
+        .patient-details strong {
+            color: #374151;
+        }
+
+        .records-table-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .records-table-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .records-table-title i {
+            color: #06b6d4;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-subtext {
+            color: #9ca3af;
+            font-size: 0.95rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-view {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.5rem 1rem;
+            border-radius: 0.4rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-view:hover {
+            background: #bfdbfe;
+            transform: translateY(-2px);
+            color: #1e40af;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.5rem 1rem;
+            border-radius: 0.4rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+            color: #991b1b;
+        }
+
+        .back-to-dashboard {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-to-dashboard:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .records-page-container {
+                margin: 1rem auto;
+            }
+
+            .records-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+
+            .records-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .patient-summary {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+
+            .records-table-card {
+                padding: 1.5rem;
+            }
+
+            table th,
+            table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .btn-view,
+            .btn-delete {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="dashboard-wrapper">
+    <div class="records-page-container">
 
-    <!-- Patient Information -->
-    <div class="dashboard-card">
-      <h3 class="dashboard-header">Patient Information</h3>
-      <p><strong>Name:</strong> <%= patient.name || 'Not provided' %></p>
-      <p><strong>Email:</strong> <%= patient.email %></p>
-      <p><strong>Patient ID:</strong> <%= patient._id %></p>
-    </div>
-
-    <!-- Medical Records -->
-    <div class="dashboard-card">
-      <h3 class="dashboard-header">Medical Records</h3>
-      <% if (records && records.length > 0) { %>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Upload Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% records.forEach(record => { %>
-              <tr>
-                <td><%= record.title %></td>
-                <td><%= record.description || 'No description' %></td>
-                <td><%= record.createdAt ? record.createdAt.toDateString() : 'Date not available' %></td>
-                <td>
-                  <a href="<%= record.fileUrl %>" class="btn-view" target="_blank">View File</a>
-                </td>
-              </tr>
-              <% }); %>
-            </tbody>
-          </table>
+        <!-- Breadcrumb Navigation -->
+        <div class="page-breadcrumb">
+            <% if (typeof isDoctor !== 'undefined' && isDoctor) { %>
+                <a href="/doctor/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+            <% } else { %>
+                <a href="/patient/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+            <% } %>
+            <span>/</span>
+            <i class="fas fa-folder-medical"></i> Medical Records
         </div>
-      <% } else { %>
-        <div class="alert-info">No medical records found for this patient.</div>
-      <% } %>
+
+        <!-- Page Header -->
+        <div class="records-header">
+            <h1><i class="fas fa-folder-medical"></i> Medical Records</h1>
+        </div>
+
+        <!-- Patient Information Summary -->
+        <div class="patient-summary">
+            <div class="patient-avatar">
+                <%= (patient.name || patient.email).charAt(0).toUpperCase() %>
+            </div>
+            <div class="patient-details">
+                <h3><%= patient.name || 'Patient' %></h3>
+                <p><strong>Email:</strong> <%= patient.email %></p>
+                <p><strong>Total Records:</strong> <span style="color: #06b6d4; font-weight: 600;"><%= records ? records.length : 0 %></span></p>
+            </div>
+        </div>
+
+        <!-- Medical Records Table -->
+        <div class="records-table-card">
+            <div class="records-table-title">
+                <i class="fas fa-list"></i> All Records
+            </div>
+
+            <% if (records && records.length > 0) { %>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Upload Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% records.forEach(record => { %>
+                                <tr>
+                                    <td><strong><%= record.title %></strong></td>
+                                    <td><%= record.description || 'No description' %></td>
+                                    <td>
+                                        <% if (record.createdAt && typeof record.createdAt === 'object') { %>
+                                            <%= new Date(record.createdAt).toLocaleDateString() %>
+                                        <% } else if (record.createdAt) { %>
+                                            <%= new Date(record.createdAt).toLocaleDateString() %>
+                                        <% } else { %>
+                                            Date not available
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="<%= record.fileUrl %>" class="btn-view" target="_blank">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            <% if (!isDoctor) { %>
+                                                <a href="/records/delete/<%= record._id %>" 
+                                                   class="btn-delete"
+                                                   onclick="return confirm('Are you sure you want to delete this record?')">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </a>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <p class="empty-text">No medical records found</p>
+                    <p class="empty-subtext">
+                        <% if (!isDoctor) { %>
+                            Start by uploading your first medical record from your dashboard.
+                        <% } else { %>
+                            This patient has not uploaded any medical records yet.
+                        <% } %>
+                    </p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Back to Dashboard Button -->
+        <div style="margin-bottom: 2rem;">
+            <% if (typeof isDoctor !== 'undefined' && isDoctor) { %>
+                <a href="/doctor/dashboard" class="back-to-dashboard">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            <% } else { %>
+                <a href="/patient/dashboard" class="back-to-dashboard">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            <% } %>
+        </div>
+
     </div>
 
-    <!-- Navigation -->
-    <div class="dashboard-card">
-      <% if (typeof isDoctor !== 'undefined' && isDoctor) { %>
-        <a href="/doctor/dashboard" class="btn-secondary">Back to Dashboard</a>
-      <% } else { %>
-        <a href="/patient/dashboard" class="btn-secondary">Back to Dashboard</a>
-      <% } %>
-    </div>
-
-  </div>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

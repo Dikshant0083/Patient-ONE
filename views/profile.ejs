@@ -1,102 +1,650 @@
-<div class="profile-container">
-  <h2 class="profile-header-title">Your Profile</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <div class="profile-header">
-    <% if (user.profilePhotoUrl) { %>
-      <img src="<%= user.profilePhotoUrl %>" alt="Profile" class="profile-photo">
-    <% } else { %>
-      <div class="profile-photo-placeholder">
-        <%= (user.email || '?').charAt(0).toUpperCase() %>
-      </div>
+        body {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1f2937;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .profile-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Header with Back Button */
+        .profile-header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .profile-header-section h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-header-section h1 i {
+            color: #06b6d4;
+        }
+
+        .back-btn {
+            background: #f3f4f6;
+            border: none;
+            color: #374151;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+            transform: translateY(-2px);
+        }
+
+        /* Alert Messages */
+        .alert {
+            margin-bottom: 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            animation: slideDown 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            object-fit: cover;
+            border: 4px solid #06b6d4;
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .profile-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-card p {
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .profile-card .user-id {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Section Card */
+        .section-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .section-card h3 i {
+            color: #06b6d4;
+        }
+
+        /* Form Styling */
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group-custom {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group-custom label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group-custom label i {
+            color: #06b6d4;
+            width: 16px;
+        }
+
+        .form-group-custom input,
+        .form-group-custom textarea {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .form-group-custom input:focus,
+        .form-group-custom textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .form-group-custom small {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+
+        /* Buttons */
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            align-self: flex-start;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Social Accounts */
+        .social-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .social-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .social-item:hover {
+            background: #f3f4f6;
+            border-color: #06b6d4;
+        }
+
+        .social-item-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .social-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 0.5rem;
+            object-fit: contain;
+        }
+
+        .social-item-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .social-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .status-connected {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-disconnected {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .social-action {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-connect,
+        .btn-disconnect {
+            padding: 0.5rem 1rem;
+            border-radius: 0.4rem;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-connect {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn-connect:hover {
+            background: #bfdbfe;
+            transform: translateY(-2px);
+        }
+
+        .btn-disconnect {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-disconnect:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+
+        .danger-zone h3 {
+            color: #dc2626;
+            border-bottom-color: #fee2e2;
+        }
+
+        .danger-zone p {
+            color: #991b1b;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-delete:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-header-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .profile-header-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .social-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .social-action {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="profile-wrapper">
+    <!-- Header with Back Button -->
+    <div class="profile-header-section">
+        <h1><i class="fas fa-user"></i> Your Profile</h1>
+        <% if (typeof isDoctor !== 'undefined' && isDoctor) { %>
+            <a href="/doctor/dashboard" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        <% } else { %>
+            <a href="/patient/dashboard" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        <% } %>
+    </div>
+
+    <!-- Alert Messages -->
+    <% if (messages && messages.error && messages.error.length > 0) { %>
+        <% messages.error.forEach(error => { %>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <%= error %>
+            </div>
+        <% }) %>
     <% } %>
-    <h3><%= user.name || user.email %></h3>
-    <p>ID: <%= user._id %></p>
-  </div>
 
-  <!-- Update Basic Information -->
-  <div class="section">
-    <h4>Update Basic Information</h4>
-    <form action="/profile/update" method="POST" class="profile-form">
-      <label for="name">Name</label>
-      <input type="text" id="name" name="name" value="<%= user.name || '' %>" placeholder="Your Name">
+    <% if (messages && messages.success && messages.success.length > 0) { %>
+        <% messages.success.forEach(success => { %>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <%= success %>
+            </div>
+        <% }) %>
+    <% } %>
 
-      <label for="profilePhotoUrl">Profile Photo URL</label>
-      <input type="url" id="profilePhotoUrl" name="profilePhotoUrl" value="<%= user.profilePhotoUrl || '' %>" placeholder="https://example.com/photo.jpg">
-      <small>Paste a direct image URL here.</small>
-
-      <button type="submit">Update Profile</button>
-    </form>
-  </div>
-
-  <!-- Change Password -->
-  <div class="section">
-    <h4>Change Password</h4>
-    <form action="/profile/password" method="POST" class="profile-form">
-      <label for="currentPassword">Current Password</label>
-      <input type="password" id="currentPassword" name="currentPassword" required placeholder="••••••••">
-
-      <label for="newPassword">New Password</label>
-      <input type="password" id="newPassword" name="newPassword" required placeholder="••••••••">
-
-      <label for="confirmNewPassword">Confirm New Password</label>
-      <input type="password" id="confirmNewPassword" name="confirmNewPassword" required placeholder="••••••••">
-
-      <button type="submit">Change Password</button>
-    </form>
-  </div>
-
-  <!-- Connected Social Accounts -->
-  <div class="section">
-    <h4>Connected Social Accounts</h4>
-    <ul class="social-account-list">
-      <li>
-        <span>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google" class="social-icon"> Google:
-        </span>
-        <% if (user.googleId) { %>
-          <span class="connected">Connected</span>
-          <form action="/profile/disconnect-social/google" method="POST">
-            <button type="submit" class="disconnect">Disconnect</button>
-          </form>
+    <!-- Profile Card -->
+    <div class="profile-card">
+        <% if (user.profilePhotoUrl) { %>
+            <img src="<%= user.profilePhotoUrl %>" alt="Profile" class="profile-avatar">
         <% } else { %>
-          <a href="/auth/google" class="connect">Connect</a>
+            <div class="profile-avatar">
+                <%= (user.email || '?').charAt(0).toUpperCase() %>
+            </div>
         <% } %>
-      </li>
-      <li>
-        <span>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/1024px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon"> Facebook:
-        </span>
-        <% if (user.facebookId) { %>
-          <span class="connected">Connected</span>
-          <form action="/profile/disconnect-social/facebook" method="POST">
-            <button type="submit" class="disconnect">Disconnect</button>
-          </form>
-        <% } else { %>
-          <a href="/auth/facebook" class="connect">Connect</a>
-        <% } %>
-      </li>
-      <li>
-        <span>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png" alt="Twitter" class="social-icon"> Twitter:
-        </span>
-        <% if (user.twitterId) { %>
-          <span class="connected">Connected</span>
-          <form action="/profile/disconnect-social/twitter" method="POST">
-            <button type="submit" class="disconnect">Disconnect</button>
-          </form>
-        <% } else { %>
-          <a href="/auth/twitter" class="connect">Connect</a>
-        <% } %>
-      </li>
-    </ul>
-  </div>
+        <h2><%= user.name || user.email %></h2>
+        <p><i class="fas fa-envelope"></i> <%= user.email %></p>
+        <div class="user-id">
+            <small><i class="fas fa-id-card"></i> ID: <%= user._id %></small>
+        </div>
+    </div>
 
-  <!-- Danger Zone -->
-  <div class="section danger-zone">
-    <h4>Danger Zone: Delete Account</h4>
-    <p>Permanently delete your account. This action cannot be undone.</p>
-    <form action="/profile/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-      <button type="submit" class="delete-btn">Delete My Account</button>
-    </form>
-  </div>
+    <!-- Update Basic Information -->
+    <div class="section-card">
+        <h3><i class="fas fa-edit"></i> Update Basic Information</h3>
+        <form action="/profile/update" method="POST" class="profile-form">
+            <div class="form-group-custom">
+                <label for="name"><i class="fas fa-user-circle"></i> Full Name</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    value="<%= user.name || '' %>" 
+                    placeholder="Enter your full name"
+                >
+            </div>
+
+            <div class="form-group-custom">
+                <label for="profilePhotoUrl"><i class="fas fa-image"></i> Profile Photo URL</label>
+                <input 
+                    type="url" 
+                    id="profilePhotoUrl" 
+                    name="profilePhotoUrl" 
+                    value="<%= user.profilePhotoUrl || '' %>" 
+                    placeholder="https://example.com/photo.jpg"
+                >
+                <small>Paste a direct image URL here. Must be a valid image link.</small>
+            </div>
+
+            <button type="submit" class="btn-primary-custom">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </form>
+    </div>
+
+    <!-- Change Password -->
+    <div class="section-card">
+        <h3><i class="fas fa-lock"></i> Change Password</h3>
+        <form action="/profile/password" method="POST" class="profile-form">
+            <div class="form-group-custom">
+                <label for="currentPassword"><i class="fas fa-key"></i> Current Password</label>
+                <input 
+                    type="password" 
+                    id="currentPassword" 
+                    name="currentPassword" 
+                    required 
+                    placeholder="Enter your current password"
+                >
+            </div>
+
+            <div class="form-group-custom">
+                <label for="newPassword"><i class="fas fa-lock-open"></i> New Password</label>
+                <input 
+                    type="password" 
+                    id="newPassword" 
+                    name="newPassword" 
+                    required 
+                    placeholder="Enter your new password"
+                >
+                <small>Must be at least 6 characters long.</small>
+            </div>
+
+            <div class="form-group-custom">
+                <label for="confirmNewPassword"><i class="fas fa-lock"></i> Confirm New Password</label>
+                <input 
+                    type="password" 
+                    id="confirmNewPassword" 
+                    name="confirmNewPassword" 
+                    required 
+                    placeholder="Confirm your new password"
+                >
+            </div>
+
+            <button type="submit" class="btn-primary-custom">
+                <i class="fas fa-check"></i> Change Password
+            </button>
+        </form>
+    </div>
+
+    <!-- Connected Social Accounts -->
+    <div class="section-card">
+        <h3><i class="fas fa-link"></i> Connected Social Accounts</h3>
+        <ul class="social-list">
+            <li class="social-item">
+                <div class="social-item-info">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google" class="social-icon">
+                    <span class="social-item-name">Google</span>
+                </div>
+                <% if (user.googleId) { %>
+                    <span class="social-status status-connected">✓ Connected</span>
+                <% } else { %>
+                    <span class="social-status status-disconnected">Not Connected</span>
+                <% } %>
+                <div class="social-action">
+                    <% if (user.googleId) { %>
+                        <form action="/profile/disconnect-social/google" method="POST" style="display: inline;">
+                            <button type="submit" class="btn-disconnect">
+                                <i class="fas fa-unlink"></i> Disconnect
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <a href="/auth/google" class="btn-connect">
+                            <i class="fas fa-link"></i> Connect
+                        </a>
+                    <% } %>
+                </div>
+            </li>
+
+            <li class="social-item">
+                <div class="social-item-info">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/1024px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
+                    <span class="social-item-name">Facebook</span>
+                </div>
+                <% if (user.facebookId) { %>
+                    <span class="social-status status-connected">✓ Connected</span>
+                <% } else { %>
+                    <span class="social-status status-disconnected">Not Connected</span>
+                <% } %>
+                <div class="social-action">
+                    <% if (user.facebookId) { %>
+                        <form action="/profile/disconnect-social/facebook" method="POST" style="display: inline;">
+                            <button type="submit" class="btn-disconnect">
+                                <i class="fas fa-unlink"></i> Disconnect
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <a href="/auth/facebook" class="btn-connect">
+                            <i class="fas fa-link"></i> Connect
+                        </a>
+                    <% } %>
+                </div>
+            </li>
+
+            <li class="social-item">
+                <div class="social-item-info">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png" alt="Twitter" class="social-icon">
+                    <span class="social-item-name">Twitter</span>
+                </div>
+                <% if (user.twitterId) { %>
+                    <span class="social-status status-connected">✓ Connected</span>
+                <% } else { %>
+                    <span class="social-status status-disconnected">Not Connected</span>
+                <% } %>
+                <div class="social-action">
+                    <% if (user.twitterId) { %>
+                        <form action="/profile/disconnect-social/twitter" method="POST" style="display: inline;">
+                            <button type="submit" class="btn-disconnect">
+                                <i class="fas fa-unlink"></i> Disconnect
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <a href="/auth/twitter" class="btn-connect">
+                            <i class="fas fa-link"></i> Connect
+                        </a>
+                    <% } %>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="section-card danger-zone">
+        <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+        <p><i class="fas fa-info-circle"></i> Permanently delete your account and all associated data. This action cannot be undone.</p>
+        <form action="/profile/delete" method="POST" onsubmit="return confirm('⚠️ Are you sure you want to delete your account permanently? This action cannot be undone.');">
+            <button type="submit" class="btn-delete">
+                <i class="fas fa-trash"></i> Delete My Account
+            </button>
+        </form>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

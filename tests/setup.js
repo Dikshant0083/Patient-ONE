@@ -1,49 +1,35 @@
-// tests/setup.js
-const mongoose = require("mongoose");
-const { MongoMemoryServer } = require("mongodb-memory-server");
+  // FILE: tests/setup.js
+  
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const mongoose = require('mongoose');
 
-let mongoServer = null;
+let mongoServer;
 
-module.exports = {
-  /**
-   * Start an in-memory mongodb and connect mongoose.
-   */
-  connect: async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
-    // Note: remove deprecated options (Mongodb driver v4+)
-    await mongoose.connect(uri);
-  },
+// Setup before all tests
+beforeAll(async () => {
+  // Create in-memory MongoDB instance
+  mongoServer = await MongoMemoryServer.create();
+  const mongoUri = mongoServer.getUri();
 
-  /**
-   * Clear all collections (use before each test if desired).
-   */
-  clearDatabase: async () => {
-    const collections = mongoose.connection.collections;
-    for (const key in collections) {
-      const collection = collections[key];
-      try {
-        await collection.deleteMany({});
-      } catch (err) {
-        // ignore if collection doesn't exist yet
-      }
-    }
-  },
+  // Connect to in-memory database
+  await mongoose.connect(mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+});
 
-  /**
-   * Close mongoose connection and stop mongoServer.
-   * Exported as both closeDatabase and close for backwards compatibility.
-   */
-  closeDatabase: async () => {
-    try {
-      await mongoose.connection.dropDatabase();
-    } catch (e) { /* ignore */ }
-    await mongoose.connection.close();
-    if (mongoServer) await mongoServer.stop();
-  },
-
-  // alias for your tests that call setup.close()
-  close: async () => {
-    return module.exports.closeDatabase();
+// Cleanup after each test
+afterEach(async () => {
+  // Clear all collections after each test
+  const collections = mongoose.connection.collections;
+  for (const key in collections) {
+    await collections[key].deleteMany({});
   }
-};
+});
+
+// Cleanup after all tests
+afterAll(async () => {
+  // Disconnect and stop the in-memory database
+  await mongoose.disconnect();
+  await mongoServer.stop();
+});

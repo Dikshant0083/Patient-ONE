@@ -7,6 +7,7 @@ const { requireRole } = require('../middleware/auth');
 const AccessControl = require('../models/AccessControl');
 const User = require('../models/User');
 const router = express.Router();
+const Appointment = require("../models/Appointment");
 
 // Doctor dashboard
 router.get('/dashboard', requireRole('doctor'), async (req, res) => {
@@ -89,5 +90,29 @@ router.post('/request/:patientId', requireRole('doctor'), async (req, res) => {
 router.get('/view-records/:patientId', requireRole('doctor'), (req, res) => {
   res.redirect(`/records/patient/${req.params.patientId}`);
 });
+
+//Appointment management
+// Show doctor appointments
+router.get("/appointments", requireRole('doctor'), async (req, res) => {
+    const appointments = await Appointment.find({ doctorId: req.user._id })
+        .populate("patientId")
+        .sort({ createdAt: -1 });
+
+res.render("doctor/appointments", { 
+    title: "Doctor Appointments",
+    appointments 
+});
+    
+});
+router.get("/appointment/:id/approve", async (req, res) => {
+  await Appointment.findByIdAndUpdate(req.params.id, { status: "approved" });
+  res.redirect("/doctor/appointments");
+});
+
+router.get("/appointment/:id/reject", async (req, res) => {
+  await Appointment.findByIdAndUpdate(req.params.id, { status: "rejected" });
+  res.redirect("/doctor/appointments");
+});
+
 
 module.exports = router;

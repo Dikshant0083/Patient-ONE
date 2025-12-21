@@ -1,23 +1,26 @@
 // ===================================================================
-// FILE: routes/records.js (FIXED VERSION)
+// FILE: routes/records.js (FULLY FIXED VERSION)
 // ===================================================================
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/User');
 const MedicalRecord = require('../models/MedicalRecord');
 const AccessControl = require('../models/AccessControl');
+const redis = require('../config/redis');
+
 const router = express.Router();
 
 // ================================================================
-// View patient records (must come FIRST to avoid route conflict)
+// VIEW ALL PATIENT RECORDS
 // ================================================================
 router.get('/patient/:patientId', isAuthenticated, async (req, res) => {
   try {
     const { patientId } = req.params;
 
-    // Check permissions
+    // PERMISSION CHECKS
     if (req.user.role === 'patient') {
       if (patientId !== req.user._id.toString()) {
         req.flash('error', 'You can only view your own records.');
@@ -25,7 +28,7 @@ router.get('/patient/:patientId', isAuthenticated, async (req, res) => {
       }
     } else if (req.user.role === 'doctor') {
       const accessControl = await AccessControl.findOne({
-        patientId: patientId,
+        patientId,
         doctorId: req.user._id,
         status: 'granted'
       });
@@ -34,27 +37,45 @@ router.get('/patient/:patientId', isAuthenticated, async (req, res) => {
         req.flash('error', 'You do not have permission to view this patient\'s records.');
         return res.redirect('/doctor/dashboard');
       }
+
     } else {
       req.flash('error', 'Access denied.');
       return res.redirect('/');
     }
 
-    // Fetch patient + their records
+    // REDIS CACHE CHECK
+    const cacheKey = `records:${patientId}`;
+    const cachedRecords = await redis.get(cacheKey);
+
+    if (cachedRecords) {
+      const patient = await User.findById(patientId);
+      return res.render('viewRecords', {
+        title: `Medical Records - ${patient.name || patient.email}`,
+        patient,
+        records: JSON.parse(cachedRecords),
+        isDoctor: req.user.role === 'doctor'
+      });
+    }
+
+    // FETCH FROM MONGO
     const patient = await User.findById(patientId);
     if (!patient) {
       req.flash('error', 'Patient not found.');
-      return res.redirect(req.user.role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard');
+      return res.redirect('/patient/dashboard');
     }
 
-    const records = await MedicalRecord.find({ patientId: patientId });
+    const records = await MedicalRecord.find({ patientId });
 
-    // Render template with patient records
-    res.render('viewRecords', { 
+    // SAVE TO REDIS CACHE
+    await redis.set(cacheKey, JSON.stringify(records), { EX: 300 });
+
+    res.render('viewRecords', {
       title: `Medical Records - ${patient.name || patient.email}`,
-      patient, 
+      patient,
       records,
       isDoctor: req.user.role === 'doctor'
     });
+
   } catch (err) {
     console.error('Error viewing records:', err);
     req.flash('error', 'An error occurred while loading records.');
@@ -62,49 +83,87 @@ router.get('/patient/:patientId', isAuthenticated, async (req, res) => {
   }
 });
 
+
 // ================================================================
-// Serve uploaded files - placed AFTER patient route
+// DELETE RECORD (MUST BE ABOVE /:filename ROUTE)
+// ================================================================
+router.get('/delete/:recordId', isAuthenticated, async (req, res) => {
+  try {
+    const record = await MedicalRecord.findById(req.params.recordId);
+
+    if (!record) {
+      req.flash('error', 'Record not found.');
+      return res.redirect('/patient/dashboard');
+    }
+
+    // Only owner can delete
+    if (record.patientId.toString() !== req.user._id.toString()) {
+      req.flash('error', 'Unauthorized action.');
+      return res.redirect('/patient/dashboard');
+    }
+
+    // DELETE FILE
+    const filePath = path.join(__dirname, '../public', record.fileUrl);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    // DELETE DB ENTRY
+    await MedicalRecord.findByIdAndDelete(record._id);
+
+    // CLEAR REDIS CACHE
+    await redis.del(`records:${req.user._id}`);
+
+    req.flash('success', 'Record deleted successfully.');
+    res.redirect('/patient/dashboard');
+
+  } catch (err) {
+    console.error('Delete error:', err);
+    req.flash('error', 'Error deleting the record.');
+    res.redirect('/patient/dashboard');
+  }
+});
+
+
+// ================================================================
+// SERVE FILES (KEEP THIS ROUTE LAST!)
 // ================================================================
 router.get('/:filename', isAuthenticated, async (req, res) => {
   try {
     const filePath = path.join(__dirname, '../public/uploads', req.params.filename);
-    
+
     if (!fs.existsSync(filePath)) {
       return res.status(404).send('File not found');
     }
 
-    // Match the way you saved fileUrl in MedicalRecord
-    const record = await MedicalRecord.findOne({ 
-      fileUrl: `/uploads/${req.params.filename}`   // ✅ FIXED to match uploads folder
+    const record = await MedicalRecord.findOne({
+      fileUrl: `/uploads/${req.params.filename}`
     });
 
-    if (!record) {
-      return res.status(404).send('Record not found');
+    if (!record) return res.status(404).send('Record not found');
+
+    // Access checks
+    if (req.user.role === 'patient' && record.patientId.toString() !== req.user._id.toString()) {
+      return res.status(403).send('Access denied');
     }
 
-    // Check access
-    if (req.user.role === 'patient') {
-      if (record.patientId.toString() !== req.user._id.toString()) {
-        return res.status(403).send('Access denied');
-      }
-    } else if (req.user.role === 'doctor') {
+    if (req.user.role === 'doctor') {
       const accessControl = await AccessControl.findOne({
         patientId: record.patientId,
         doctorId: req.user._id,
         status: 'granted'
       });
 
-      if (!accessControl) {
-        return res.status(403).send('Access denied - No permission to view this patient\'s records');
-      }
+      if (!accessControl) return res.status(403).send('Access denied');
     }
 
-    // Serve file
     res.sendFile(filePath);
+
   } catch (err) {
     console.error('Error serving file:', err);
     res.status(500).send('Server error');
   }
 });
+
 
 module.exports = router;
