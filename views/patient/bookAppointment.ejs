@@ -21,43 +21,57 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1rem;
+            padding: 1rem;
         }
 
-        /* Main Container */
+        /* Main Container - CENTERED & SCROLLABLE */
         .appointment-container {
             background: white;
             border-radius: 1.5rem;
             box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
+            margin: 0 auto;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 95vh;
         }
 
         /* Header */
         .appointment-header {
             background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
             color: white;
-            padding: 3rem 2rem;
+            padding: 2rem 1.5rem;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .appointment-header h1 {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
 
         .appointment-header p {
-            font-size: 1rem;
+            font-size: 0.95rem;
             opacity: 0.95;
+        }
+
+        /* Scrollable Content Area */
+        .appointment-content {
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Doctor Card Section */
         .doctor-section {
-            padding: 2rem;
+            padding: 1.5rem;
             background: #f9fafb;
             border-bottom: 1px solid #e5e7eb;
+            flex-shrink: 0;
         }
 
         .doctor-info {
@@ -67,8 +81,8 @@
         }
 
         .doctor-avatar {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: linear-gradient(135deg, #06b6d4, #0891b2);
             display: flex;
@@ -76,12 +90,12 @@
             justify-content: center;
             color: white;
             font-weight: 700;
-            font-size: 2rem;
+            font-size: 1.75rem;
             flex-shrink: 0;
         }
 
         .doctor-details h3 {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #1f2937;
             margin-bottom: 0.25rem;
@@ -89,26 +103,42 @@
 
         .doctor-details p {
             color: #6b7280;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             margin: 0;
         }
 
         .doctor-title {
             color: #06b6d4;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+        }
+
+        /* Consultation Fee Badge */
+        .consultation-fee {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.65rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-top: 0.75rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         /* Form Section */
         .form-section {
-            padding: 2rem;
+            padding: 1.5rem;
+            flex-shrink: 0;
         }
 
         .form-section h2 {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #1f2937;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -120,15 +150,15 @@
 
         /* Form Groups */
         .form-group-custom {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .form-group-custom label {
             display: block;
             font-weight: 600;
             color: #374151;
-            margin-bottom: 0.75rem;
-            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
 
         .form-group-custom label i {
@@ -140,11 +170,11 @@
         .form-group-custom input,
         .form-group-custom textarea {
             width: 100%;
-            padding: 0.875rem 1rem;
+            padding: 0.75rem 0.875rem;
             border: 2px solid #e5e7eb;
             border-radius: 0.75rem;
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
             background: #fafbfc;
         }
@@ -157,25 +187,20 @@
             box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
         }
 
-        .form-group-custom input::placeholder,
-        .form-group-custom textarea::placeholder {
-            color: #9ca3af;
-        }
-
         .form-group-custom textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 80px;
         }
 
         /* Info Box */
         .info-box {
             background: #e0f2fe;
             border-left: 4px solid #06b6d4;
-            padding: 1rem;
+            padding: 0.875rem;
             border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             color: #1e40af;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .info-box i {
@@ -183,28 +208,71 @@
             color: #06b6d4;
         }
 
+        /* Payment Info Box */
+        .payment-info {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-info h4 {
+            color: #92400e;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .payment-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .payment-info li {
+            color: #78350f;
+            font-size: 0.85rem;
+            padding: 0.3rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .payment-info li i {
+            color: #f59e0b;
+            font-size: 0.75rem;
+            min-width: 16px;
+        }
+
         /* Buttons */
         .button-group {
             display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+            flex-shrink: 0;
+            padding-bottom: 0.5rem;
         }
 
         .btn-submit {
             flex: 1;
             background: linear-gradient(135deg, #06b6d4, #0891b2);
             color: white;
-            padding: 1rem;
+            padding: 0.95rem;
             border-radius: 0.75rem;
             border: none;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            min-height: 44px;
         }
 
         .btn-submit:hover {
@@ -212,19 +280,21 @@
             box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
         }
 
-        .btn-submit:active {
-            transform: translateY(0);
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .btn-back {
             flex: 1;
             background: #f3f4f6;
             color: #374151;
-            padding: 1rem;
+            padding: 0.95rem;
             border-radius: 0.75rem;
             border: none;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
@@ -232,6 +302,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            min-height: 44px;
         }
 
         .btn-back:hover {
@@ -240,41 +311,132 @@
             transform: translateY(-2px);
         }
 
-        /* Responsive */
-        @media (max-width: 600px) {
+        /* Responsive - Small screens */
+        @media (max-width: 640px) {
+            body {
+                padding: 0.5rem;
+            }
+
             .appointment-container {
+                max-height: 100vh;
                 border-radius: 0.75rem;
             }
 
             .appointment-header {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem 1rem;
             }
 
             .appointment-header h1 {
                 font-size: 1.5rem;
             }
 
+            .appointment-header p {
+                font-size: 0.85rem;
+            }
+
             .doctor-section {
-                padding: 1.5rem;
+                padding: 1rem;
             }
 
             .doctor-info {
-                flex-direction: column;
-                text-align: center;
+                gap: 1rem;
             }
 
             .doctor-avatar {
-                width: 70px;
-                height: 70px;
-                font-size: 1.75rem;
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .doctor-details h3 {
+                font-size: 1rem;
+            }
+
+            .doctor-details p {
+                font-size: 0.8rem;
             }
 
             .form-section {
-                padding: 1.5rem;
+                padding: 1rem;
+            }
+
+            .form-section h2 {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .form-group-custom {
+                margin-bottom: 0.75rem;
+            }
+
+            .form-group-custom label {
+                font-size: 0.85rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .form-group-custom input,
+            .form-group-custom textarea {
+                font-size: 16px;
+                padding: 0.7rem;
+            }
+
+            .form-group-custom textarea {
+                min-height: 75px;
+            }
+
+            .info-box {
+                font-size: 0.8rem;
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .payment-info {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .payment-info h4 {
+                font-size: 0.9rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .payment-info li {
+                font-size: 0.8rem;
+                padding: 0.25rem 0;
+            }
+
+            .button-group {
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+
+            .btn-submit,
+            .btn-back {
+                font-size: 0.9rem;
+                padding: 0.85rem 0.5rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .appointment-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .doctor-avatar {
+                width: 55px;
+                height: 55px;
+                font-size: 1.3rem;
+            }
+
+            .consultation-fee {
+                font-size: 0.85rem;
+                padding: 0.55rem 0.85rem;
             }
 
             .button-group {
                 flex-direction: column;
+                gap: 0.5rem;
             }
 
             .btn-submit,
@@ -283,19 +445,22 @@
             }
         }
 
-        /* Loading state */
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        /* Scrollbar Styling */
+        .appointment-content::-webkit-scrollbar {
+            width: 6px;
         }
 
-        /* Form validation feedback */
-        .form-group-custom input:invalid {
-            border-color: #ef4444;
+        .appointment-content::-webkit-scrollbar-track {
+            background: #f1f5f9;
         }
 
-        .form-group-custom input:valid {
-            border-color: #16a34a;
+        .appointment-content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .appointment-content::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
@@ -308,93 +473,223 @@
         <p>Schedule your consultation with the doctor</p>
     </div>
 
-    <!-- Doctor Information -->
-    <div class="doctor-section">
-        <div class="doctor-info">
-            <div class="doctor-avatar">
-                <%= (doctor.name || doctor.email).charAt(0).toUpperCase() %>
-            </div>
-            <div class="doctor-details">
-                <h3><%= doctor.name || 'Doctor' %></h3>
-                <p class="doctor-title"><i class="fas fa-stethoscope"></i> Medical Professional</p>
-                <p><%= doctor.email %></p>
+    <!-- Scrollable Content -->
+    <div class="appointment-content">
+        <!-- Doctor Information -->
+        <div class="doctor-section">
+            <div class="doctor-info">
+                <div class="doctor-avatar">
+                    <%= (doctor.name || doctor.email).charAt(0).toUpperCase() %>
+                </div>
+                <div class="doctor-details">
+                    <h3><%= doctor.name || 'Doctor' %></h3>
+                    <p class="doctor-title"><i class="fas fa-stethoscope"></i> Medical Professional</p>
+                    <p><%= doctor.email %></p>
+                    <div class="consultation-fee">
+                        <i class="fas fa-rupee-sign"></i> ₹500 Consultation Fee
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Form -->
-    <div class="form-section">
-        <h2><i class="fas fa-clipboard-list"></i> Appointment Details</h2>
+        <!-- Form -->
+        <div class="form-section">
+            <h2><i class="fas fa-clipboard-list"></i> Appointment Details</h2>
 
-        <div class="info-box">
-            <i class="fas fa-info-circle"></i>
-            Please select a date and time that works best for you. The doctor will review your request.
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                Please select a date and time that works best for you. Payment will be processed securely via Razorpay.
+            </div>
+
+            <div class="payment-info">
+                <h4><i class="fas fa-shield-alt"></i> Secure Payment</h4>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Payment processed via Razorpay</li>
+                    <li><i class="fas fa-check-circle"></i> 100% secure and encrypted</li>
+                    <li><i class="fas fa-check-circle"></i> Supports UPI, Cards, Net Banking</li>
+                    <li><i class="fas fa-check-circle"></i> Instant confirmation after payment</li>
+                </ul>
+            </div>
+
+            <form id="appointmentForm">
+                <!-- Date -->
+                <div class="form-group-custom">
+                    <label for="appointmentDate">
+                        <i class="fas fa-calendar"></i> Appointment Date
+                    </label>
+                    <input 
+                        type="date" 
+                        id="appointmentDate"
+                        name="date" 
+                        required
+                        min="<%= new Date().toISOString().split('T')[0] %>"
+                    >
+                </div>
+
+                <!-- Time -->
+                <div class="form-group-custom">
+                    <label for="appointmentTime">
+                        <i class="fas fa-clock"></i> Appointment Time
+                    </label>
+                    <input 
+                        type="time" 
+                        id="appointmentTime"
+                        name="time" 
+                        required
+                        min="09:00"
+                        max="18:00"
+                    >
+                </div>
+
+                <!-- Reason -->
+                <div class="form-group-custom">
+                    <label for="appointmentReason">
+                        <i class="fas fa-pen-fancy"></i> Reason for Appointment
+                    </label>
+                    <textarea 
+                        id="appointmentReason"
+                        name="reason" 
+                        placeholder="Describe your symptoms or reason for the consultation (optional)..."
+                    ></textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-lock"></i> Proceed to Payment
+                    </button>
+                    <a href="/patient/dashboard" class="btn-back">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </form>
         </div>
-
-        <form action="/patient/book-appointment/<%= doctor._id %>" method="POST">
-            <!-- Date -->
-            <div class="form-group-custom">
-                <label for="appointmentDate">
-                    <i class="fas fa-calendar"></i> Appointment Date
-                </label>
-                <input 
-                    type="date" 
-                    id="appointmentDate"
-                    name="date" 
-                    required
-                    min="<%= new Date().toISOString().split('T')[0] %>"
-                >
-            </div>
-
-            <!-- Time -->
-            <div class="form-group-custom">
-                <label for="appointmentTime">
-                    <i class="fas fa-clock"></i> Appointment Time
-                </label>
-                <input 
-                    type="time" 
-                    id="appointmentTime"
-                    name="time" 
-                    required
-                >
-            </div>
-
-            <!-- Reason -->
-            <div class="form-group-custom">
-                <label for="appointmentReason">
-                    <i class="fas fa-pen-fancy"></i> Reason for Appointment
-                </label>
-                <textarea 
-                    id="appointmentReason"
-                    name="reason" 
-                    placeholder="Describe your symptoms or reason for the consultation (optional)..."
-                ></textarea>
-            </div>
-
-            <!-- Buttons -->
-            <div class="button-group">
-                <button type="submit" class="btn-submit">
-                    <i class="fas fa-check"></i> Confirm Appointment
-                </button>
-                <a href="/patient/dashboard" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Back
-                </a>
-            </div>
-        </form>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-    // Set minimum date to today
-    const dateInput = document.getElementById('appointmentDate');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
+    const form = document.getElementById('appointmentForm');
+    const submitBtn = document.getElementById('submitBtn');
 
-    // Set business hours (9 AM to 6 PM)
-    const timeInput = document.getElementById('appointmentTime');
-    timeInput.setAttribute('min', '09:00');
-    timeInput.setAttribute('max', '18:00');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const date = document.getElementById('appointmentDate').value;
+        const time = document.getElementById('appointmentTime').value;
+        const reason = document.getElementById('appointmentReason').value;
+
+        if (!date || !time) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        try {
+            // Create appointment and payment order
+            const response = await fetch('/patient/book-appointment/<%= doctor._id %>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ date, time, reason })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to create appointment');
+            }
+
+            // Initialize Razorpay payment
+            const options = {
+                key: data.razorpayKeyId,
+                amount: data.order.amount,
+                currency: data.order.currency,
+                name: 'MediCare',
+                description: 'Consultation Fee',
+                order_id: data.order.id,
+                handler: async function(response) {
+                    // Verify payment
+                    const verifyResponse = await fetch('/patient/verify-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            appointmentId: data.appointmentId
+                        })
+                    });
+
+                    const verifyData = await verifyResponse.json();
+
+                    if (verifyData.success) {
+                        // Clear draft after successful booking
+                        sessionStorage.removeItem('appointment_draft');
+                        alert('✅ Payment successful! Appointment booked.');
+                        window.location.href = '/patient/dashboard';
+                    } else {
+                        alert('❌ Payment verification failed. Please contact support.');
+                    }
+                },
+                prefill: {
+                    name: '<%= user.name || "" %>',
+                    email: '<%= user.email %>'
+                },
+                theme: {
+                    color: '#06b6d4'
+                },
+                modal: {
+                    ondismiss: function() {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-lock"></i> Proceed to Payment';
+                    }
+                }
+            };
+
+            const razorpay = new Razorpay(options);
+            razorpay.open();
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ ' + error.message);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-lock"></i> Proceed to Payment';
+        }
+    });
+</script>
+
+<script src="/js/cache-manager.js"></script>
+<script>
+  const appointmentCache = new CacheManager();
+
+  // Cache appointment form data while typing
+  document.getElementById('appointmentDate')?.addEventListener('change', (e) => {
+    appointmentCache.saveToSessionStorage('appointment_draft', {
+      date: e.target.value,
+      time: document.getElementById('appointmentTime').value,
+      reason: document.getElementById('appointmentReason').value
+    });
+  });
+
+  // Restore draft on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    const draft = appointmentCache.getFromSessionStorage('appointment_draft');
+    if (draft) {
+      if (draft.date) document.getElementById('appointmentDate').value = draft.date;
+      if (draft.time) document.getElementById('appointmentTime').value = draft.time;
+      if (draft.reason) document.getElementById('appointmentReason').value = draft.reason;
+      console.log('📝 Restored appointment draft');
+    }
+  });
+
+  // Clear draft after successful booking in payment handler
+  // This will be called after payment success in the handler function above
 </script>
 
 </body>

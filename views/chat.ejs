@@ -893,6 +893,66 @@
     </div>
 </div>
 
+<!-- // ADD THIS TO CHAT PAGE (views/chat.ejs) -->
+
+
+<script src="/js/cache-manager.js"></script>
+<script>
+  const chatCache = new CacheManager();
+
+  // Cache messages as they come
+  socket.on('receive_message', async ({ _id, from, to, message, createdAt, replyTo, replyToText }) => {
+    // Save to cache
+    await chatCache.cacheMessage({
+      _id,
+      from,
+      to,
+      text: message,
+      createdAt,
+      replyTo,
+      replyToText
+    }, roomId);
+
+    // Display message
+    if (from === userId) return;
+    const timestamp = new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    appendMessage(toName, message, false, timestamp, replyTo, replyToText, _id);
+  });
+
+  // Load cached messages on page load
+  window.addEventListener('DOMContentLoaded', async () => {
+    const cachedMessages = await chatCache.getCachedMessages(roomId);
+    console.log(`📦 Loaded ${cachedMessages.length} cached messages`);
+  });
+
+  // Handle offline message sending
+  const originalSendMessage = sendMessage;
+  sendMessage = async function() {
+    const message = document.getElementById('msg-input').value.trim();
+    if (!message) return;
+
+    // Save to cache immediately
+    const tempMessage = {
+      from: userId,
+      to: toId,
+      text: message,
+      createdAt: new Date(),
+      _id: `temp_${Date.now()}`
+    };
+    
+    await chatCache.cacheMessage(tempMessage, roomId);
+
+    // Try to send via socket
+    if (navigator.onLine) {
+      originalSendMessage();
+    } else {
+      alert('📴 You are offline. Message saved and will be sent when online.');
+      document.getElementById('msg-input').value = '';
+      appendMessage(userName, message, true, new Date().toLocaleTimeString(), null, null, tempMessage._id);
+    }
+  };
+</script>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const userId = "<%= user._id %>";

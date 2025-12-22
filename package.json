@@ -3,12 +3,19 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "cross-env NODE_ENV=test jest --runInBand --forceExit",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:verbose": "jest --verbose",
     "test:auth": "jest auth.test.js",
-    "test:profile": "jest profile.test.js"
+    "test:profile": "jest profile.test.js",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:chrome": "playwright test --project=chromium",
+    "test:e2e:report": "playwright show-report"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +44,7 @@
   },
   "description": "",
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@types/jest": "^30.0.0",
     "@types/supertest": "^6.0.3",
     "cross-env": "^10.1.0",

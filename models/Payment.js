@@ -1,9 +1,9 @@
 // ===================================================================
-// FILE: models/Appointment.js (UPDATED - ADD PAYMENT FIELDS)
+// FILE: models/Payment.js (NEW FILE)
 // ===================================================================
 const mongoose = require('mongoose');
 
-const appointmentSchema = new mongoose.Schema({
+const paymentSchema = new mongoose.Schema({
   patientId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -14,40 +14,42 @@ const appointmentSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  date: {
+  appointmentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Appointment',
+    required: true
+  },
+  amount: {
+    type: Number,
+    required: true
+  },
+  currency: {
+    type: String,
+    default: 'INR'
+  },
+  razorpayOrderId: {
     type: String,
     required: true
   },
-  time: {
+  razorpayPaymentId: {
     type: String,
-    required: true
+    default: null
   },
-  reason: {
+  razorpaySignature: {
     type: String,
-    default: ''
+    default: null
   },
   status: {
-    type: String,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending'
-  },
-  // NEW PAYMENT FIELDS
-  consultationFee: {
-    type: Number,
-    default: 1 // Default consultation fee in INR
-  },
-  paymentStatus: {
     type: String,
     enum: ['pending', 'completed', 'failed'],
     default: 'pending'
   },
-  paymentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Payment',
+  paymentMethod: {
+    type: String,
     default: null
   }
 }, {
   timestamps: true
 });
 
-module.exports = mongoose.model('Appointment', appointmentSchema);
+module.exports = mongoose.model('Payment', paymentSchema);

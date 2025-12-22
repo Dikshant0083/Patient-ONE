@@ -1057,7 +1057,89 @@
                 </div>
             </div>
         </div>
+<!-- Add this section to your existing patient/dashboard.ejs file -->
+<!-- Insert this AFTER the "Access Summary" section and BEFORE the "Footer Navigation" -->
 
+<!-- Payment History Section -->
+<div class="dashboard-card">
+    <div class="card-header-section">
+        <h2 class="card-title"><i class="fas fa-credit-card"></i> Payment History</h2>
+        <a href="/patient/payment-history" class="view-all-btn"><i class="fas fa-arrow-right"></i> View All</a>
+    </div>
+
+    <div class="table-wrapper">
+        <% if (paymentHistory && paymentHistory.length > 0) { %>
+            <table class="records-table">
+                <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th>Appointment Date</th>
+                        <th>Amount</th>
+                        <th>Payment Date</th>
+                        <th>Status</th>
+                        <th>Transaction ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% paymentHistory.slice(0, 5).forEach(payment => { %>
+                        <tr>
+                            <td><strong>Dr. <%= payment.doctorId.name || payment.doctorId.email %></strong></td>
+                            <td>
+                                <% if (payment.appointmentId) { %>
+                                    <%= payment.appointmentId.date %>
+                                <% } else { %>
+                                    —
+                                <% } %>
+                            </td>
+                            <td>
+                                <strong style="color: #16a34a; font-size: 1.05rem;">
+                                    ₹<%= payment.amount %>
+                                </strong>
+                            </td>
+                            <td><%= new Date(payment.createdAt).toLocaleDateString() %></td>
+                            <td>
+                                <% if (payment.status === 'completed') { %>
+                                    <span class="appointment-badge badge-approved">
+                                        <i class="fas fa-check-circle"></i> Completed
+                                    </span>
+                                <% } else if (payment.status === 'pending') { %>
+                                    <span class="appointment-badge badge-pending">
+                                        <i class="fas fa-clock"></i> Pending
+                                    </span>
+                                <% } else { %>
+                                    <span class="appointment-badge badge-rejected">
+                                        <i class="fas fa-times-circle"></i> Failed
+                                    </span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <code style="font-size: 0.85rem; color: #6b7280;">
+                                    <%= payment.razorpayPaymentId ? payment.razorpayPaymentId.substring(0, 20) + '...' : 'N/A' %>
+                                </code>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fas fa-receipt"></i></div>
+                <p class="empty-text">No payment history yet. Book an appointment to get started.</p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- Also update the Stats section to show total spent -->
+<!-- Replace one of your existing stat cards or add this as a 5th card -->
+
+<div class="stat-card">
+    <div class="stat-icon green"><i class="fas fa-rupee-sign"></i></div>
+    <div class="stat-number">
+        ₹<%= paymentHistory ? paymentHistory.reduce((sum, p) => sum + p.amount, 0) : 0 %>
+    </div>
+    <div class="stat-label">Total Spent</div>
+</div>
         <!-- Footer Navigation -->
         <div class="footer-nav">
             <a href="/profile" class="nav-btn profile">
@@ -1080,6 +1162,134 @@
         }
     });
 </script>
+   
+<script type="application/json" id="dashboard-data">
+  <%- JSON.stringify({
+    records: records || [],
+    appointments: myAppointments || [],
+    doctors: doctors || [],
+    accessList: accessList || [],
+    paymentHistory: paymentHistory || [],
+    timestamp: Date.now()
+  }) %>
+</script>
+
+<script src="/js/cache-manager.js"></script>
+<script>
+  // Initialize cache manager
+  const cache = new CacheManager();
+
+  // ===== CACHE DASHBOARD DATA ON LOAD =====
+ document.addEventListener('DOMContentLoaded', async () => {
+
+ const dashboardData = JSON.parse(
+      document.getElementById('dashboard-data').textContent
+    );
+    console.log('📊 Dashboard Data:', dashboardData);
+
+    try {
+      await cache.cacheMedicalRecords(dashboardData.records);
+      await cache.cacheAppointments(dashboardData.appointments);
+      await cache.cacheDoctors(dashboardData.doctors);
+
+      cache.cacheDashboardStats({
+        totalRecords: dashboardData.records.length,
+        totalAppointments: dashboardData.appointments.length,
+        authorizedDoctors: dashboardData.accessList.filter(a => a.status === 'granted').length,
+        totalSpent: dashboardData.paymentHistory.reduce((s, p) => s + p.amount, 0)
+      });
+
+      console.log('✅ Dashboard cached');
+    } catch (e) {
+      console.error('❌ Cache error', e);
+    }
+  });
+
+  // ===== LOAD CACHED DATA ON OFFLINE =====
+  window.addEventListener('offline', async () => {
+    console.log('📴 You are offline - loading cached data');
+    
+    // Show offline indicator
+    showOfflineIndicator();
+    
+    // Load from cache
+    const cachedRecords = await cache.getCachedMedicalRecords();
+    const cachedAppointments = await cache.getCachedAppointments();
+    const cachedStats = cache.getCachedDashboardStats();
+    
+    if (cachedRecords || cachedAppointments) {
+      alert('You are offline. Showing cached data.');
+    }
+  });
+
+  window.addEventListener('online', () => {
+    console.log('🌐 You are back online');
+    hideOfflineIndicator();
+    location.reload(); // Refresh to get latest data
+  });
+
+  // ===== OFFLINE INDICATOR =====
+  function showOfflineIndicator() {
+    const indicator = document.createElement('div');
+    indicator.id = 'offline-indicator';
+    indicator.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #ef4444;
+      color: white;
+      text-align: center;
+      padding: 0.75rem;
+      font-weight: 600;
+      z-index: 99999;
+    `;
+    indicator.innerHTML = '<i class="fas fa-wifi-slash"></i> You are offline - Showing cached data';
+    document.body.appendChild(indicator);
+  }
+
+  function hideOfflineIndicator() {
+    const indicator = document.getElementById('offline-indicator');
+    if (indicator) indicator.remove();
+  }
+
+  // ===== PREFETCH DATA FOR FASTER NAVIGATION =====
+  // Prefetch profile data on hover
+  document.querySelector('a[href="/profile"]')?.addEventListener('mouseenter', async () => {
+    const userPrefs = cache.getUserPreferences();
+    console.log('🔄 Prefetching profile data...', userPrefs);
+  });
+
+  // ===== SAVE USER PREFERENCES =====
+  function saveUserPreference(key, value) {
+    const prefs = cache.getUserPreferences();
+    prefs[key] = value;
+    cache.saveUserPreferences(prefs);
+    console.log('💾 Saved preference:', key, value);
+  }
+
+  // Example: Save theme preference
+  // saveUserPreference('theme', 'dark');
+
+  // ===== CLEAR CACHE BUTTON (Optional) =====
+  function clearAllCache() {
+    if (confirm('Clear all cached data? This will require reloading data from server.')) {
+      cache.clearAllCache();
+      alert('✅ Cache cleared successfully');
+      location.reload();
+    }
+  }
+
+  // Add clear cache button to footer (optional)
+  /*
+  const clearBtn = document.createElement('button');
+  clearBtn.textContent = 'Clear Cache';
+  clearBtn.className = 'nav-btn profile';
+  clearBtn.onclick = clearAllCache;
+  document.querySelector('.footer-nav')?.appendChild(clearBtn);
+  */
+</script>
+
 
 </body>
 </html>
