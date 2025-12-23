@@ -42,6 +42,7 @@
             top: 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             z-index: 1000;
+            overflow-y: auto;
         }
 
         .sidebar-logo {
@@ -51,10 +52,11 @@
             margin-bottom: 2rem;
         }
 
-        .sidebar-logo h2 {
-            color: #06b6d4;
-            font-size: 1.25rem;
-            font-weight: 700;
+        .sidebar-logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 0.5rem;
         }
 
         .sidebar-logo p {
@@ -79,6 +81,7 @@
             text-decoration: none;
             transition: all 0.3s ease;
             font-size: 0.95rem;
+            gap: 0.75rem;
         }
 
         .sidebar-nav a:hover,
@@ -89,8 +92,8 @@
         }
 
         .sidebar-nav i {
-            margin-right: 1rem;
             width: 20px;
+            text-align: center;
         }
 
         /* Content Area */
@@ -98,6 +101,7 @@
             margin-left: 260px;
             width: calc(100% - 260px);
             padding: 2rem;
+            overflow-x: hidden;
         }
 
         /* Header */
@@ -110,6 +114,8 @@
             padding: 1.5rem 2rem;
             border-radius: 1rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .dashboard-header h1 {
@@ -129,6 +135,7 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            min-width: fit-content;
         }
 
         .user-avatar {
@@ -147,7 +154,7 @@
         /* Stats Cards */
         .stats-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -213,6 +220,9 @@
             margin-bottom: 1.5rem;
             border-radius: 0.75rem;
             border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             animation: slideDown 0.3s ease;
         }
 
@@ -258,6 +268,8 @@
             margin-bottom: 1.5rem;
             border-bottom: 2px solid #f3f4f6;
             padding-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .card-title {
@@ -267,6 +279,7 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            margin: 0;
         }
 
         .card-title i {
@@ -284,6 +297,10 @@
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
         }
 
         .view-all-btn:hover {
@@ -313,6 +330,7 @@
             border-radius: 0.5rem;
             font-family: inherit;
             transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
 
         .form-group-custom input:focus,
@@ -332,6 +350,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .upload-btn:hover {
@@ -381,6 +402,7 @@
         .action-buttons {
             display: flex;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .btn-view, .btn-delete {
@@ -395,6 +417,7 @@
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
+            white-space: nowrap;
         }
 
         .btn-view {
@@ -426,6 +449,7 @@
             border-radius: 0.4rem;
             font-weight: 600;
             font-size: 0.8rem;
+            white-space: nowrap;
         }
 
         .badge-pending {
@@ -463,7 +487,7 @@
         /* Doctor Cards */
         .doctors-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 1.5rem;
         }
 
@@ -501,12 +525,14 @@
             font-weight: 600;
             color: #1f2937;
             margin-bottom: 0.25rem;
+            word-break: break-word;
         }
 
         .doctor-email {
             color: #6b7280;
             font-size: 0.875rem;
             margin-bottom: 1rem;
+            word-break: break-all;
         }
 
         .access-badge {
@@ -537,6 +563,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .doctor-btn {
@@ -601,7 +628,7 @@
         /* Summary Cards */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 1.5rem;
         }
 
@@ -648,6 +675,7 @@
             margin-top: 2rem;
             padding-top: 2rem;
             border-top: 1px solid #e5e7eb;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
@@ -681,24 +709,44 @@
             background: #fecaca;
         }
 
-        /* Responsive */
+        /* Sidebar Toggle Button */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #1f2937;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .sidebar {
-                width: 200px;
+                width: 220px;
             }
 
             .content-wrapper {
-                margin-left: 200px;
-                width: calc(100% - 200px);
+                margin-left: 220px;
+                width: calc(100% - 220px);
                 padding: 1.5rem;
             }
 
             .dashboard-header {
                 padding: 1rem 1.5rem;
+                gap: 0.75rem;
             }
 
             .dashboard-header h1 {
                 font-size: 1.5rem;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .doctors-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             }
         }
 
@@ -707,9 +755,11 @@
                 position: fixed;
                 left: -260px;
                 transition: left 0.3s ease;
+                width: 260px;
+                z-index: 1001;
             }
 
-            .sidebar.open {
+            .sidebar.active {
                 left: 0;
             }
 
@@ -719,22 +769,88 @@
                 padding: 1rem;
             }
 
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-
-            .doctors-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .summary-grid {
-                grid-template-columns: 1fr;
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .dashboard-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
+                padding: 1rem;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .dashboard-header p {
+                font-size: 0.85rem;
+            }
+
+            .header-user {
+                width: 100%;
+                justify-content: space-between;
+                gap: 0.5rem;
+            }
+
+            .header-user div:first-child {
+                min-width: 0;
+                flex: 1;
+            }
+
+            .header-user p {
+                font-size: 0.95rem;
+                margin-bottom: 0;
+            }
+
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .dashboard-card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .card-header-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+                padding-bottom: 0.75rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .view-all-btn {
+                width: 100%;
+                justify-content: center;
             }
 
             .records-table th,
@@ -747,8 +863,181 @@
                 flex-direction: column;
             }
 
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .doctor-card {
+                padding: 1.25rem;
+            }
+
             .doctor-actions {
                 flex-direction: column;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-group-custom input,
+            .form-group-custom textarea {
+                padding: 0.65rem 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .upload-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.65rem 1rem;
+            }
+
+            .footer-nav {
+                flex-direction: column;
+                gap: 0.75rem;
+                margin-top: 1.5rem;
+                padding-top: 1.5rem;
+            }
+
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.65rem 1rem;
+            }
+
+            .alert {
+                margin: 0.75rem 0;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-wrapper {
+                padding: 0.75rem;
+            }
+
+            .dashboard-header {
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.25rem;
+            }
+
+            .dashboard-header p {
+                font-size: 0.8rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .stat-card {
+                padding: 0.75rem;
+            }
+
+            .stat-number {
+                font-size: 1.25rem;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.25rem;
+            }
+
+            .dashboard-card {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+
+            .form-group-custom label {
+                font-size: 0.9rem;
+            }
+
+            .form-group-custom input,
+            .form-group-custom textarea {
+                padding: 0.6rem 0.65rem;
+                font-size: 0.85rem;
+            }
+
+            .upload-btn {
+                padding: 0.6rem 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            .records-table th,
+            .records-table td {
+                padding: 0.5rem 0.35rem;
+                font-size: 0.75rem;
+            }
+
+            .btn-view, .btn-delete {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+            }
+
+            .doctor-card {
+                padding: 0.75rem;
+            }
+
+            .doctor-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+
+            .doctor-name {
+                font-size: 0.95rem;
+            }
+
+            .doctor-email {
+                font-size: 0.8rem;
+            }
+
+            .doctor-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .appointment-badge {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+            }
+
+            .access-badge {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+            }
+
+            .summary-number {
+                font-size: 1.75rem;
+            }
+
+            .summary-label {
+                font-size: 0.85rem;
+            }
+
+            .nav-btn {
+                padding: 0.6rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .alert {
+                margin: 0.5rem 0;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -757,9 +1046,9 @@
 
 <div class="main-container">
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
-            <h2>MediCare</h2>
+            <img src="/images/new-design__2_-removebg-preview.png" alt="MediCare Logo">
             <p>Patient Portal</p>
         </div>
 
@@ -778,6 +1067,9 @@
 
         <!-- Header -->
         <div class="dashboard-header">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
             <div>
                 <h1>Dashboard</h1>
                 <p>Welcome to your medical records portal</p>
@@ -836,6 +1128,12 @@
                 <div class="stat-icon orange"><i class="fas fa-hourglass-half"></i></div>
                 <div class="stat-number"><%= myAppointments ? myAppointments.filter(a => a.status === 'pending').length : 0 %></div>
                 <div class="stat-label">Pending Requests</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-rupee-sign"></i></div>
+                <div class="stat-number">₹<%= paymentHistory ? paymentHistory.reduce((sum, p) => sum + p.amount, 0) : 0 %></div>
+                <div class="stat-label">Total Spent</div>
             </div>
         </div>
 
@@ -1057,89 +1355,77 @@
                 </div>
             </div>
         </div>
-<!-- Add this section to your existing patient/dashboard.ejs file -->
-<!-- Insert this AFTER the "Access Summary" section and BEFORE the "Footer Navigation" -->
 
-<!-- Payment History Section -->
-<div class="dashboard-card">
-    <div class="card-header-section">
-        <h2 class="card-title"><i class="fas fa-credit-card"></i> Payment History</h2>
-        <a href="/patient/payment-history" class="view-all-btn"><i class="fas fa-arrow-right"></i> View All</a>
-    </div>
-
-    <div class="table-wrapper">
-        <% if (paymentHistory && paymentHistory.length > 0) { %>
-            <table class="records-table">
-                <thead>
-                    <tr>
-                        <th>Doctor</th>
-                        <th>Appointment Date</th>
-                        <th>Amount</th>
-                        <th>Payment Date</th>
-                        <th>Status</th>
-                        <th>Transaction ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% paymentHistory.slice(0, 5).forEach(payment => { %>
-                        <tr>
-                            <td><strong>Dr. <%= payment.doctorId.name || payment.doctorId.email %></strong></td>
-                            <td>
-                                <% if (payment.appointmentId) { %>
-                                    <%= payment.appointmentId.date %>
-                                <% } else { %>
-                                    —
-                                <% } %>
-                            </td>
-                            <td>
-                                <strong style="color: #16a34a; font-size: 1.05rem;">
-                                    ₹<%= payment.amount %>
-                                </strong>
-                            </td>
-                            <td><%= new Date(payment.createdAt).toLocaleDateString() %></td>
-                            <td>
-                                <% if (payment.status === 'completed') { %>
-                                    <span class="appointment-badge badge-approved">
-                                        <i class="fas fa-check-circle"></i> Completed
-                                    </span>
-                                <% } else if (payment.status === 'pending') { %>
-                                    <span class="appointment-badge badge-pending">
-                                        <i class="fas fa-clock"></i> Pending
-                                    </span>
-                                <% } else { %>
-                                    <span class="appointment-badge badge-rejected">
-                                        <i class="fas fa-times-circle"></i> Failed
-                                    </span>
-                                <% } %>
-                            </td>
-                            <td>
-                                <code style="font-size: 0.85rem; color: #6b7280;">
-                                    <%= payment.razorpayPaymentId ? payment.razorpayPaymentId.substring(0, 20) + '...' : 'N/A' %>
-                                </code>
-                            </td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        <% } else { %>
-            <div class="empty-state">
-                <div class="empty-icon"><i class="fas fa-receipt"></i></div>
-                <p class="empty-text">No payment history yet. Book an appointment to get started.</p>
+        <!-- Payment History Section -->
+        <div class="dashboard-card">
+            <div class="card-header-section">
+                <h2 class="card-title"><i class="fas fa-credit-card"></i> Payment History</h2>
+                <a href="/patient/payment-history" class="view-all-btn"><i class="fas fa-arrow-right"></i> View All</a>
             </div>
-        <% } %>
-    </div>
-</div>
 
-<!-- Also update the Stats section to show total spent -->
-<!-- Replace one of your existing stat cards or add this as a 5th card -->
+            <div class="table-wrapper">
+                <% if (paymentHistory && paymentHistory.length > 0) { %>
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Appointment Date</th>
+                                <th>Amount</th>
+                                <th>Payment Date</th>
+                                <th>Status</th>
+                                <th>Transaction ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% paymentHistory.slice(0, 5).forEach(payment => { %>
+                                <tr>
+                                    <td><strong>Dr. <%= payment.doctorId.name || payment.doctorId.email %></strong></td>
+                                    <td>
+                                        <% if (payment.appointmentId) { %>
+                                            <%= payment.appointmentId.date %>
+                                        <% } else { %>
+                                            —
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #16a34a; font-size: 1.05rem;">
+                                            ₹<%= payment.amount %>
+                                        </strong>
+                                    </td>
+                                    <td><%= new Date(payment.createdAt).toLocaleDateString() %></td>
+                                    <td>
+                                        <% if (payment.status === 'completed') { %>
+                                            <span class="appointment-badge badge-approved">
+                                                <i class="fas fa-check-circle"></i> Completed
+                                            </span>
+                                        <% } else if (payment.status === 'pending') { %>
+                                            <span class="appointment-badge badge-pending">
+                                                <i class="fas fa-clock"></i> Pending
+                                            </span>
+                                        <% } else { %>
+                                            <span class="appointment-badge badge-rejected">
+                                                <i class="fas fa-times-circle"></i> Failed
+                                            </span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <code style="font-size: 0.85rem; color: #6b7280;">
+                                            <%= payment.razorpayPaymentId ? payment.razorpayPaymentId.substring(0, 20) + '...' : 'N/A' %>
+                                        </code>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-receipt"></i></div>
+                        <p class="empty-text">No payment history yet. Book an appointment to get started.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
 
-<div class="stat-card">
-    <div class="stat-icon green"><i class="fas fa-rupee-sign"></i></div>
-    <div class="stat-number">
-        ₹<%= paymentHistory ? paymentHistory.reduce((sum, p) => sum + p.amount, 0) : 0 %>
-    </div>
-    <div class="stat-label">Total Spent</div>
-</div>
         <!-- Footer Navigation -->
         <div class="footer-nav">
             <a href="/profile" class="nav-btn profile">
@@ -1155,6 +1441,33 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Sidebar toggle functionality
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+    });
+
+    // Close sidebar when clicking outside
+    document.addEventListener('click', function(event) {
+        const isClickInsideSidebar = sidebar.contains(event.target);
+        const isClickOnToggle = sidebarToggle.contains(event.target);
+        
+        if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+        }
+    });
+
+    // Close sidebar on nav link click
+    document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('active');
+            }
+        });
+    });
+
     // Active link highlighting
     document.querySelectorAll('.sidebar-nav a').forEach(link => {
         if (link.href === window.location.href) {
@@ -1162,7 +1475,7 @@
         }
     });
 </script>
-   
+
 <script type="application/json" id="dashboard-data">
   <%- JSON.stringify({
     records: records || [],
@@ -1180,9 +1493,8 @@
   const cache = new CacheManager();
 
   // ===== CACHE DASHBOARD DATA ON LOAD =====
- document.addEventListener('DOMContentLoaded', async () => {
-
- const dashboardData = JSON.parse(
+  document.addEventListener('DOMContentLoaded', async () => {
+    const dashboardData = JSON.parse(
       document.getElementById('dashboard-data').textContent
     );
     console.log('📊 Dashboard Data:', dashboardData);
@@ -1208,15 +1520,10 @@
   // ===== LOAD CACHED DATA ON OFFLINE =====
   window.addEventListener('offline', async () => {
     console.log('📴 You are offline - loading cached data');
-    
-    // Show offline indicator
     showOfflineIndicator();
-    
-    // Load from cache
     const cachedRecords = await cache.getCachedMedicalRecords();
     const cachedAppointments = await cache.getCachedAppointments();
     const cachedStats = cache.getCachedDashboardStats();
-    
     if (cachedRecords || cachedAppointments) {
       alert('You are offline. Showing cached data.');
     }
@@ -1225,7 +1532,7 @@
   window.addEventListener('online', () => {
     console.log('🌐 You are back online');
     hideOfflineIndicator();
-    location.reload(); // Refresh to get latest data
+    location.reload();
   });
 
   // ===== OFFLINE INDICATOR =====
@@ -1252,44 +1559,7 @@
     const indicator = document.getElementById('offline-indicator');
     if (indicator) indicator.remove();
   }
-
-  // ===== PREFETCH DATA FOR FASTER NAVIGATION =====
-  // Prefetch profile data on hover
-  document.querySelector('a[href="/profile"]')?.addEventListener('mouseenter', async () => {
-    const userPrefs = cache.getUserPreferences();
-    console.log('🔄 Prefetching profile data...', userPrefs);
-  });
-
-  // ===== SAVE USER PREFERENCES =====
-  function saveUserPreference(key, value) {
-    const prefs = cache.getUserPreferences();
-    prefs[key] = value;
-    cache.saveUserPreferences(prefs);
-    console.log('💾 Saved preference:', key, value);
-  }
-
-  // Example: Save theme preference
-  // saveUserPreference('theme', 'dark');
-
-  // ===== CLEAR CACHE BUTTON (Optional) =====
-  function clearAllCache() {
-    if (confirm('Clear all cached data? This will require reloading data from server.')) {
-      cache.clearAllCache();
-      alert('✅ Cache cleared successfully');
-      location.reload();
-    }
-  }
-
-  // Add clear cache button to footer (optional)
-  /*
-  const clearBtn = document.createElement('button');
-  clearBtn.textContent = 'Clear Cache';
-  clearBtn.className = 'nav-btn profile';
-  clearBtn.onclick = clearAllCache;
-  document.querySelector('.footer-nav')?.appendChild(clearBtn);
-  */
 </script>
-
 
 </body>
 </html>
