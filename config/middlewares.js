@@ -10,6 +10,12 @@ const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 
 const configureMiddlewares = (app) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  if (isProduction) {
+    app.set('trust proxy', 1);
+  }
+
   // Body parsing
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
@@ -23,6 +29,8 @@ const configureMiddlewares = (app) => {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
+      sameSite: 'lax',
+      secure: isProduction,
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   });
@@ -36,7 +44,7 @@ const configureMiddlewares = (app) => {
   // Static files and uploads
   // ============================
   app.use(express.static(path.join(__dirname, '../public')));
-  app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+  app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
   // ============================
   // Flash messages

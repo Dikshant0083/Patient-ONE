@@ -10,6 +10,10 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
 const configurePassport = () => {
+  const googleCallbackUrl =
+    process.env.GOOGLE_CALLBACK_URL ||
+    'https://localhost:3000/auth/google/callback';
+
   // Local Strategy
   passport.use(new LocalStrategy({
     usernameField: 'email',
@@ -32,7 +36,7 @@ const configurePassport = () => {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'https://localhost:3000/auth/google/callback',
+    callbackURL: googleCallbackUrl,
     passReqToCallback: true,
   }, async (req, accessToken, refreshToken, profile, done) => {
     try {

@@ -6,9 +6,8 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const socketIO = require('socket.io');
-const http = require('http');              // ✅ added
 const fs = require('fs');
-const https = require('https');            // ✅ added
+const https = require('https');
 // Import configuration
 const { connectDatabase } = require('./config/database');
 const { configureMiddlewares } = require('./config/middlewares');
@@ -27,6 +26,13 @@ const Message = require('./models/Message');
 const { errorHandler } = require('./utils/errorHandler');
 
 const app = express();
+const isDirectRun = require.main === module;
+
+const createNoopIo = () => ({
+    use: () => {},
+    on: () => {},
+    to: () => ({ emit: () => {} })
+});
 
 // ===================================================================
 // SERVER CREATION (ONLY CHANGE REQUIRED FOR DEPLOY)
@@ -35,22 +41,24 @@ const app = express();
 // SERVER (HTTPS locally, HTTP on Render)
 // ===================================================================
 let server;
+let io = createNoopIo();
 
-if (process.env.NODE_ENV === 'production') {
-    // Render handles HTTPS automatically
-    server = require('http').createServer(app);
-} else {
-    // Local HTTPS for teacher requirement
-    const sslOptions = {
-        key: fs.readFileSync("c:\\certs\\localhostkey.pem"),
-        cert: fs.readFileSync("c:\\certs\\localhostcert.pem")
-    };
-    server = https.createServer(sslOptions, app);
+if (isDirectRun) {
+    if (process.env.NODE_ENV === 'production') {
+        // Render handles HTTPS automatically
+        server = require('http').createServer(app);
+    } else {
+        // Local HTTPS for teacher requirement
+        const sslOptions = {
+            key: fs.readFileSync("c:\\certs\\localhostkey.pem"),
+            cert: fs.readFileSync("c:\\certs\\localhostcert.pem")
+        };
+        server = https.createServer(sslOptions, app);
+    }
+
+    // Attach socket.io to standalone server only
+    io = socketIO(server);
 }
-
-
-// Attach socket.io to server
-const io = socketIO(server);
 
 const PORT = process.env.PORT || 3000;
 
@@ -187,9 +195,9 @@ app.use('/chat', chatRoutes);
 app.use(errorHandler);
 
 // ===================================================================
-// Start Server (UNCHANGED LOGIC)
+// Start Server
 // ===================================================================
-if (process.env.NODE_ENV !== 'test') {
+if (isDirectRun && process.env.NODE_ENV !== 'test') {
     server.listen(PORT, () => {
         console.log(`🚀 Server running on port ${PORT}`);
     });
