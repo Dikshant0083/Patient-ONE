@@ -1,172 +1,266 @@
-// ===================================================================
-// FILE: routes/auth.js
-// ===================================================================
 const express = require('express');
-const passport = require('passport');
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const { getFirebaseAdminAuth } = require('../config/firebaseAdmin');
+const { getFirebaseClientConfig } = require('../config/firebaseClient');
+
 const router = express.Router();
 
-// -------------------------------------------------------------------
-// Register routes
-// -------------------------------------------------------------------
+const wantsJson = (req) =>
+  req.xhr ||
+  req.is('application/json') ||
+  (req.get('accept') || '').includes('application/json');
+
+const sendError = (req, res, redirectPath, message, status = 400) => {
+  if (wantsJson(req)) {
+    return res.status(status).json({ error: message });
+  }
+
+  req.flash('error', message);
+  return res.redirect(redirectPath);
+};
+
+const sendRedirect = (req, res, redirectUrl) => {
+  if (wantsJson(req)) {
+    return res.json({ redirectUrl });
+  }
+
+  return res.redirect(redirectUrl);
+};
+
+const normalizeEmail = (email) => (typeof email === 'string' ? email.trim().toLowerCase() : '');
+
+const getRedirectForUser = (user) => {
+  if (!user.role) {
+    return '/auth/select-role';
+  }
+
+  if (user.role === 'doctor') {
+    return '/doctor/dashboard';
+  }
+
+  if (user.role === 'patient') {
+    return '/patient/dashboard';
+  }
+
+  return '/profile';
+};
+
+const syncUserFromFirebase = async (decodedToken, options = {}) => {
+  const { role = null, createIfMissing = true } = options;
+  const provider = decodedToken.firebase?.sign_in_provider || 'unknown';
+  const email = normalizeEmail(decodedToken.email);
+
+  if (!email) {
+    throw new Error('Your Firebase account is missing an email address.');
+  }
+
+  let user = await User.findOne({ firebaseUid: decodedToken.uid });
+
+  if (!user) {
+    user = await User.findOne({ email });
+  }
+
+  if (!user) {
+    if (!createIfMissing) {
+      throw new Error('No account found for this Google email. Please register with Google first.');
+    }
+
+    user = new User({
+      email,
+      role: role || null,
+    });
+  }
+
+  if (user.firebaseUid && user.firebaseUid !== decodedToken.uid) {
+    throw new Error('This email is already linked to another Firebase account.');
+  }
+
+  user.firebaseUid = decodedToken.uid;
+  user.email = email;
+  user.emailVerified = Boolean(decodedToken.email_verified);
+  user.lastLoginProvider = 'google';
+  user.lastLoginAt = new Date();
+
+  if (decodedToken.name && (!user.name || provider === 'google.com')) {
+    user.name = decodedToken.name;
+  }
+
+  if (decodedToken.picture && (!user.profilePhotoUrl || provider === 'google.com')) {
+    user.profilePhotoUrl = decodedToken.picture;
+  }
+
+  if (provider === 'google.com') {
+    user.googleId = decodedToken.uid;
+  }
+
+  if (role && !user.role) {
+    user.role = role;
+  }
+
+  await user.save();
+  return user;
+};
+
+const completeLogin = (req, res, next, user) => {
+  req.logIn(user, (error) => {
+    if (error) {
+      return next(error);
+    }
+
+    return sendRedirect(req, res, getRedirectForUser(user));
+  });
+};
+
 router.get('/register', (req, res) => {
-  res.render('register', { title: 'Register' });
+  res.render('register', {
+    title: 'Register',
+    firebaseClientConfig: getFirebaseClientConfig(),
+  });
 });
 
 router.post('/register', async (req, res, next) => {
   try {
-    const { email, password, confirm_password, role } = req.body;
+    const { idToken, email, password, confirm_password, role } = req.body;
 
-    if (!email || !password || !role) {
-      req.flash('error', 'Email, password, and role are required.');
-      return res.redirect('/auth/register');
-    }
     if (!['doctor', 'patient'].includes(role)) {
-      req.flash('error', 'Invalid role selected.');
-      return res.redirect('/auth/register');
+      return sendError(req, res, '/auth/register', 'Please choose either doctor or patient.');
     }
+
+    if (idToken) {
+      const decodedToken = await getFirebaseAdminAuth().verifyIdToken(idToken);
+      const user = await syncUserFromFirebase(decodedToken, { role, createIfMissing: true });
+      return completeLogin(req, res, next, user);
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!normalizedEmail || !password) {
+      return sendError(req, res, '/auth/register', 'Email, password, and role are required.');
+    }
+
     if (password !== confirm_password) {
-      req.flash('error', 'Passwords do not match.');
-      return res.redirect('/auth/register');
+      return sendError(req, res, '/auth/register', 'Passwords do not match.');
     }
+
     if (password.length < 6) {
-      req.flash('error', 'Password must be at least 6 characters.');
-      return res.redirect('/auth/register');
+      return sendError(req, res, '/auth/register', 'Password must be at least 6 characters.');
     }
 
-    const existing = await User.findOne({ email });
+    const existing = await User.findOne({ email: normalizedEmail });
     if (existing) {
-      req.flash('error', 'Email already registered.');
-      return res.redirect('/auth/register');
+      return sendError(req, res, '/auth/register', 'Email already registered. Please sign in instead.');
     }
 
-    const user = new User({ email, password, role });
-    await user.save();
+    const user = new User({
+      email: normalizedEmail,
+      password,
+      role,
+    });
 
+    await user.save();
     req.flash('success', 'Registration successful! Please sign in.');
-    res.redirect('/auth/login');
-  } catch (e) {
-    console.error('Registration error:', e);
-    next(e);
+    return res.redirect('/auth/login');
+  } catch (error) {
+    console.error('Registration error:', error);
+    return sendError(req, res, '/auth/register', error.message || 'Unable to complete registration.', 401);
   }
 });
 
-// -------------------------------------------------------------------
-// Login routes
-// -------------------------------------------------------------------
-
 router.get('/login', (req, res) => {
-  res.render('login', { title: 'Login' });
-});
-
-router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) return next(err);
-    if (!user) {
-      req.flash('error', info.message || 'Invalid email or password.');
-      return res.redirect('/auth/login');
-    }
-    req.logIn(user, (err) => {
-      if (err) return next(err);
-
-      // Redirect based on role
-
-      if (user.role === 'doctor') {
-        return res.redirect('/doctor/dashboard');
-      } else if (user.role === 'patient') {
-        return res.redirect('/patient/dashboard');
-      } else {
-        return res.redirect('/profile');
-      }
-    });
-  })(req, res, next);
-});
-
-// -------------------------------------------------------------------
-// Logout
-// -------------------------------------------------------------------
-
-
-router.get('/logout', (req, res, next) => {
-  req.logout((err) => {
-    if (err) return next(err);
-    req.flash('success', 'You have been logged out.');
-    res.redirect('/auth/login');
+  res.render('login', {
+    title: 'Login',
+    firebaseClientConfig: getFirebaseClientConfig(),
   });
 });
 
-// -------------------------------------------------------------------
-// Role selection routes (used for first-time Google login)
-// -------------------------------------------------------------------
+router.post('/login', async (req, res, next) => {
+  try {
+    const { idToken, email, password } = req.body;
+
+    if (idToken) {
+      const decodedToken = await getFirebaseAdminAuth().verifyIdToken(idToken);
+      const user = await syncUserFromFirebase(decodedToken, { createIfMissing: false });
+      return completeLogin(req, res, next, user);
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+    if (!normalizedEmail || !password) {
+      return sendError(req, res, '/auth/login', 'Email and password are required.');
+    }
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user || !user.password) {
+      const message = user && user.googleId
+        ? 'This account uses Google sign-in. Please continue with Google.'
+        : 'Invalid email or password.';
+      return sendError(req, res, '/auth/login', message, 401);
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.password);
+    if (!passwordMatches) {
+      return sendError(req, res, '/auth/login', 'Invalid email or password.', 401);
+    }
+
+    user.lastLoginProvider = 'local';
+    user.lastLoginAt = new Date();
+    await user.save();
+
+    return completeLogin(req, res, next, user);
+  } catch (error) {
+    console.error('Login error:', error);
+    return sendError(req, res, '/auth/login', error.message || 'Unable to sign in.', 401);
+  }
+});
+
+router.get('/logout', (req, res, next) => {
+  req.logout((error) => {
+    if (error) {
+      return next(error);
+    }
+
+    req.flash('success', 'You have been logged out.');
+    return res.redirect('/auth/login');
+  });
+});
+
 router.get('/select-role', (req, res) => {
   if (!req.user) {
     return res.redirect('/auth/login');
   }
- res.render('select-role', { title: 'Select Role' });
+
+  return res.render('select-role', { title: 'Select Role' });
 });
 
-router.post('/select-role', async (req, res) => {
-  const { role } = req.body; // "doctor" or "patient"
-  if (!['doctor', 'patient'].includes(role)) {
-    return res.status(400).send('Invalid role');
-  }
+router.post('/select-role', async (req, res, next) => {
+  try {
+    const { role } = req.body;
 
-  req.user.role = role;
-  await req.user.save();
+    if (!req.user) {
+      return res.redirect('/auth/login');
+    }
 
-  if (role === 'doctor') {
-    return res.redirect('/doctor/dashboard');
-  } else {
-    return res.redirect('/patient/dashboard');
+    if (!['doctor', 'patient'].includes(role)) {
+      return sendError(req, res, '/auth/select-role', 'Please choose either doctor or patient.');
+    }
+
+    req.user.role = role;
+    await req.user.save();
+
+    return res.redirect(getRedirectForUser(req.user));
+  } catch (error) {
+    return next(error);
   }
 });
 
-// -------------------------------------------------------------------
-// Social auth routes
-// -------------------------------------------------------------------
+router.get('/google', (req, res) => {
+  req.flash('error', 'Google sign-in now runs through Firebase. Please use the Google button on the login or register page.');
+  res.redirect('/auth/login');
+});
 
-// Google
-router.get('/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/auth/login', failureFlash: true }),
-  (req, res) => {
-    if (!req.user.role) {
-      req.flash('info', 'Please select your role to continue.');
-      return res.redirect('/auth/select-role'); // ✅ fixed
-    }
-
-    // already has role -> go to dashboard/profile
-    if (req.user.role === 'doctor') {
-      return res.redirect('/doctor/dashboard');
-    } else if (req.user.role === 'patient') {
-      return res.redirect('/patient/dashboard');
-    } else {
-      return res.redirect('/profile');
-    }
-  }
-);
-
-// // Facebook
-// router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
-// router.get('/facebook/callback',
-//   passport.authenticate('facebook', { failureRedirect: '/auth/login', failureFlash: true }),
-//   (req, res) => {
-//     req.flash('success', (req.authInfo && req.authInfo.message) || 'Logged in with Facebook.');
-//     res.redirect('/profile');
-//   }
-// );
-
-// // Twitter
-// router.get('/twitter', passport.authenticate('twitter'));
-// router.get('/twitter/callback',
-//   passport.authenticate('twitter', { failureRedirect: '/auth/login', failureFlash: true }),
-//   (req, res) => {
-//     req.flash('success', (req.authInfo && req.authInfo.message) || 'Logged in with Twitter.');
-//     res.redirect('/profile');
-//   }
-// );
+router.get('/google/callback', (req, res) => {
+  req.flash('error', 'Google sign-in now runs through Firebase. Please use the Google button on the login or register page.');
+  res.redirect('/auth/login');
+});
 
 module.exports = router;

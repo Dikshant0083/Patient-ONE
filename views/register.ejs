@@ -1,14 +1,14 @@
 <div class="auth-wrapper">
   <div class="auth-container">
-    <!-- Header -->
     <div class="auth-header">
       <img src="/images/new-design__2_-removebg-preview.png" alt="HealthConnect" class="auth-logo">
       <h1 class="auth-title">Create an Account</h1>
-      <p class="auth-subtitle">Join HealthConnect and manage your health securely</p>
+      <p class="auth-subtitle">Create your account in MongoDB, or use Google via Firebase</p>
     </div>
 
-    <!-- Register Form -->
-    <form action="/auth/register" method="POST" class="auth-form">
+    <div id="auth-client-message" class="client-auth-message" hidden></div>
+
+    <form action="/auth/register" method="POST" class="auth-form" id="firebase-register-form">
       <div class="form-group">
         <label for="email">Email Address</label>
         <input type="email" id="email" name="email" required placeholder="your@example.com">
@@ -16,13 +16,13 @@
 
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" required placeholder="••••••••">
+        <input type="password" id="password" name="password" required placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
         <p class="form-help">Minimum 6 characters required</p>
       </div>
 
       <div class="form-group">
         <label for="confirm_password">Confirm Password</label>
-        <input type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••">
+        <input type="password" id="confirm_password" name="confirm_password" required placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
       </div>
 
       <div class="form-group">
@@ -37,28 +37,23 @@
       <button type="submit" class="btn-primary">Create Account</button>
     </form>
 
-    <!-- Divider -->
     <div class="divider"><span>or</span></div>
 
-    <!-- Social Login -->
     <div class="social-login">
-      <a href="/auth/google" class="social-btn">
+      <button type="button" class="social-btn" data-google-auth="register">
         <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google">
         Continue with Google
-      </a>
-      <!-- <a href="/auth/facebook" class="social-btn">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/1024px-2021_Facebook_icon.svg.png" alt="Facebook">
-        Continue with Facebook
-      </a>
-      <a href="/auth/twitter" class="social-btn">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png" alt="Twitter">
-        Continue with Twitter
-      </a> -->
+      </button>
     </div>
 
-    <!-- Footer -->
     <div class="auth-footer">
       <p>Already have an account? <a href="/auth/login">Log in</a></p>
     </div>
   </div>
 </div>
+
+<script>
+  window.firebaseAuthConfig = <%- JSON.stringify(typeof firebaseClientConfig !== 'undefined' ? firebaseClientConfig : {}) %>;
+  window.firebaseAuthPage = 'register';
+</script>
+<script type="module" src="/js/firebase-auth.js"></script>

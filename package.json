@@ -29,6 +29,7 @@
     "express": "^5.1.0",
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.18.2",
+    "firebase-admin": "^13.10.0",
     "flash": "^1.1.0",
     "helmet": "^8.2.0",
     "mongoose": "^8.17.1",

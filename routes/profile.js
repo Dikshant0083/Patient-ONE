@@ -58,7 +58,7 @@ router.post('/password', isAuthenticated, async (req, res, next) => {
     }
 
     if (!user.password) {
-      req.flash('error', 'You signed up with social login. Set a password via support first.');
+      req.flash('error', 'This account does not have a local password set. Sign in with Google instead.');
       return res.redirect('/profile');
     }
 

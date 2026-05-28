@@ -9,9 +9,13 @@ const userSchema = new mongoose.Schema({
   password:     { type: String }, // optional for social-only accounts
   name:         { type: String, trim: true },
   profilePhotoUrl: { type: String, trim: true },
+  firebaseUid:  { type: String, unique: true, sparse: true },
   googleId:     { type: String, unique: true, sparse: true },
   facebookId:   { type: String, unique: true, sparse: true },
   twitterId:    { type: String, unique: true, sparse: true },
+  emailVerified: { type: Boolean, default: false },
+  lastLoginProvider: { type: String, enum: ['local', 'google'], default: 'local' },
+  lastLoginAt:   { type: Date },
   role: { type: String, enum: ['doctor', 'patient'], default: null },
 }, { timestamps: true });
 

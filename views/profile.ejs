@@ -511,50 +511,58 @@
     <!-- Change Password -->
     <div class="section-card">
         <h3><i class="fas fa-lock"></i> Change Password</h3>
-        <form action="/profile/password" method="POST" class="profile-form">
-            <div class="form-group-custom">
-                <label for="currentPassword"><i class="fas fa-key"></i> Current Password</label>
-                <input 
-                    type="password" 
-                    id="currentPassword" 
-                    name="currentPassword" 
-                    required 
-                    placeholder="Enter your current password"
-                >
-            </div>
+        <% if (!user.password) { %>
+            <p>This account currently uses Google sign-in only.</p>
+            <p>Your profile and app data are still stored in MongoDB, but there is no local password for this account.</p>
+            <a href="/auth/login" class="btn-primary-custom">
+                <i class="fas fa-arrow-right"></i> Sign in with Google
+            </a>
+        <% } else { %>
+            <form action="/profile/password" method="POST" class="profile-form">
+                <div class="form-group-custom">
+                    <label for="currentPassword"><i class="fas fa-key"></i> Current Password</label>
+                    <input 
+                        type="password" 
+                        id="currentPassword" 
+                        name="currentPassword" 
+                        required 
+                        placeholder="Enter your current password"
+                    >
+                </div>
 
-            <div class="form-group-custom">
-                <label for="newPassword"><i class="fas fa-lock-open"></i> New Password</label>
-                <input 
-                    type="password" 
-                    id="newPassword" 
-                    name="newPassword" 
-                    required 
-                    placeholder="Enter your new password"
-                >
-                <small>Must be at least 6 characters long.</small>
-            </div>
+                <div class="form-group-custom">
+                    <label for="newPassword"><i class="fas fa-lock-open"></i> New Password</label>
+                    <input 
+                        type="password" 
+                        id="newPassword" 
+                        name="newPassword" 
+                        required 
+                        placeholder="Enter your new password"
+                    >
+                    <small>Must be at least 6 characters long.</small>
+                </div>
 
-            <div class="form-group-custom">
-                <label for="confirmNewPassword"><i class="fas fa-lock"></i> Confirm New Password</label>
-                <input 
-                    type="password" 
-                    id="confirmNewPassword" 
-                    name="confirmNewPassword" 
-                    required 
-                    placeholder="Confirm your new password"
-                >
-            </div>
+                <div class="form-group-custom">
+                    <label for="confirmNewPassword"><i class="fas fa-lock"></i> Confirm New Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmNewPassword" 
+                        name="confirmNewPassword" 
+                        required 
+                        placeholder="Confirm your new password"
+                    >
+                </div>
 
-            <button type="submit" class="btn-primary-custom">
-                <i class="fas fa-check"></i> Change Password
-            </button>
-        </form>
+                <button type="submit" class="btn-primary-custom">
+                    <i class="fas fa-check"></i> Change Password
+                </button>
+            </form>
+        <% } %>
     </div>
 
     <!-- Connected Social Accounts -->
     <div class="section-card">
-        <h3><i class="fas fa-link"></i> Connected Social Accounts</h3>
+        <h3><i class="fas fa-link"></i> Connected Sign-In Providers</h3>
         <ul class="social-list">
             <li class="social-item">
                 <div class="social-item-info">
@@ -567,67 +575,9 @@
                     <span class="social-status status-disconnected">Not Connected</span>
                 <% } %>
                 <div class="social-action">
-                    <% if (user.googleId) { %>
-                        <form action="/profile/disconnect-social/google" method="POST" style="display: inline;">
-                            <button type="submit" class="btn-disconnect">
-                                <i class="fas fa-unlink"></i> Disconnect
-                            </button>
-                        </form>
-                    <% } else { %>
-                        <a href="/auth/google" class="btn-connect">
-                            <i class="fas fa-link"></i> Connect
-                        </a>
-                    <% } %>
-                </div>
-            </li>
-
-            <li class="social-item">
-                <div class="social-item-info">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/1024px-2021_Facebook_icon.svg.png" alt="Facebook" class="social-icon">
-                    <span class="social-item-name">Facebook</span>
-                </div>
-                <% if (user.facebookId) { %>
-                    <span class="social-status status-connected">✓ Connected</span>
-                <% } else { %>
-                    <span class="social-status status-disconnected">Not Connected</span>
-                <% } %>
-                <div class="social-action">
-                    <% if (user.facebookId) { %>
-                        <form action="/profile/disconnect-social/facebook" method="POST" style="display: inline;">
-                            <button type="submit" class="btn-disconnect">
-                                <i class="fas fa-unlink"></i> Disconnect
-                            </button>
-                        </form>
-                    <% } else { %>
-                        <a href="/auth/facebook" class="btn-connect">
-                            <i class="fas fa-link"></i> Connect
-                        </a>
-                    <% } %>
-                </div>
-            </li>
-
-            <li class="social-item">
-                <div class="social-item-info">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png" alt="Twitter" class="social-icon">
-                    <span class="social-item-name">Twitter</span>
-                </div>
-                <% if (user.twitterId) { %>
-                    <span class="social-status status-connected">✓ Connected</span>
-                <% } else { %>
-                    <span class="social-status status-disconnected">Not Connected</span>
-                <% } %>
-                <div class="social-action">
-                    <% if (user.twitterId) { %>
-                        <form action="/profile/disconnect-social/twitter" method="POST" style="display: inline;">
-                            <button type="submit" class="btn-disconnect">
-                                <i class="fas fa-unlink"></i> Disconnect
-                            </button>
-                        </form>
-                    <% } else { %>
-                        <a href="/auth/twitter" class="btn-connect">
-                            <i class="fas fa-link"></i> Connect
-                        </a>
-                    <% } %>
+                    <a href="/auth/login" class="btn-connect">
+                        <i class="fas fa-link"></i> Manage on Login Page
+                    </a>
                 </div>
             </li>
         </ul>

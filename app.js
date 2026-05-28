@@ -8,6 +8,7 @@ const path = require('path');
 const socketIO = require('socket.io');
 const fs = require('fs');
 const https = require('https');
+const http = require('http');
 // Import configuration
 const { connectDatabase } = require('./config/database');
 const { configureMiddlewares } = require('./config/middlewares');
@@ -27,6 +28,7 @@ const { errorHandler } = require('./utils/errorHandler');
 
 const app = express();
 const isDirectRun = require.main === module;
+const isVercel = Boolean(process.env.VERCEL);
 
 const createNoopIo = () => ({
     use: () => {},
@@ -37,7 +39,58 @@ const helmet = require("helmet");
 
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://cdn.jsdelivr.net",
+          "https://checkout.razorpay.com",
+          "https://www.gstatic.com",
+        ],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://cdn.jsdelivr.net",
+          "https://cdnjs.cloudflare.com",
+          "https://fonts.googleapis.com",
+        ],
+        fontSrc: [
+          "'self'",
+          "https://fonts.gstatic.com",
+          "https://cdnjs.cloudflare.com",
+        ],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://upload.wikimedia.org",
+          "https://lh3.googleusercontent.com",
+          "https://*.googleusercontent.com",
+        ],
+        connectSrc: [
+          "'self'",
+          "https://identitytoolkit.googleapis.com",
+          "https://securetoken.googleapis.com",
+          "https://www.googleapis.com",
+          "https://firebaseinstallations.googleapis.com",
+          "wss:",
+          "ws:",
+        ],
+        frameSrc: [
+          "'self'",
+          "https://*.firebaseapp.com",
+          "https://accounts.google.com",
+          "https://checkout.razorpay.com",
+        ],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
   })
 );
 // ===================================================================
@@ -210,3 +263,4 @@ if (isDirectRun && process.env.NODE_ENV !== 'test') {
 }
 
 module.exports = app;
+module.exports.io = io;
