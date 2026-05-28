@@ -1,4 +1,4 @@
-// ===================================================================
+﻿// ===================================================================
 // FILE: app.js (FINAL FIXED HTTPS VERSION WITH SOCKET.IO CHAT)
 // ===================================================================
 
@@ -42,13 +42,16 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
+
         scriptSrc: [
           "'self'",
           "'unsafe-inline'",
           "https://cdn.jsdelivr.net",
           "https://checkout.razorpay.com",
           "https://www.gstatic.com",
+          "https://apis.google.com",
         ],
+
         styleSrc: [
           "'self'",
           "'unsafe-inline'",
@@ -56,11 +59,13 @@ app.use(
           "https://cdnjs.cloudflare.com",
           "https://fonts.googleapis.com",
         ],
+
         fontSrc: [
           "'self'",
           "https://fonts.gstatic.com",
           "https://cdnjs.cloudflare.com",
         ],
+
         imgSrc: [
           "'self'",
           "data:",
@@ -69,28 +74,41 @@ app.use(
           "https://lh3.googleusercontent.com",
           "https://*.googleusercontent.com",
         ],
+
         connectSrc: [
           "'self'",
           "https://identitytoolkit.googleapis.com",
           "https://securetoken.googleapis.com",
           "https://www.googleapis.com",
           "https://firebaseinstallations.googleapis.com",
+          "https://apis.google.com",
           "wss:",
           "ws:",
         ],
+
         frameSrc: [
           "'self'",
           "https://*.firebaseapp.com",
           "https://accounts.google.com",
+          "https://*.google.com",
           "https://checkout.razorpay.com",
         ],
+
+        formAction: [
+          "'self'",
+          "https://accounts.google.com",
+        ],
+
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
-        formAction: ["'self'"],
+
         upgradeInsecureRequests: [],
       },
     },
-    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+
+    crossOriginOpenerPolicy: {
+      policy: "same-origin-allow-popups",
+    },
   })
 );
 // ===================================================================
