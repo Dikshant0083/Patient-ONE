@@ -33,7 +33,13 @@ const createNoopIo = () => ({
     on: () => {},
     to: () => ({ emit: () => {} })
 });
+const helmet = require("helmet");
 
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 // ===================================================================
 // SERVER CREATION (ONLY CHANGE REQUIRED FOR DEPLOY)
 // ===================================================================
