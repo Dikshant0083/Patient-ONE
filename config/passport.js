@@ -12,7 +12,7 @@ const User = require('../models/User');
 const configurePassport = () => {
   const googleCallbackUrl =
     process.env.GOOGLE_CALLBACK_URL ||
-    'https://localhost:3000/auth/google/callback';
+    'http://localhost:3000/auth/google/callback';
 
   // Local Strategy
   passport.use(new LocalStrategy({
